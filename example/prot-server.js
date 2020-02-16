@@ -31,22 +31,31 @@ Number
 NumStr
 */
 
-/*
-var client = new numbersService.NumbersService(SERVER_ADDRESS, grpc.credentials.createInsecure());
-console.log('client', client);
-console.log('okk')
-*/
 
+function toStr(num1) {
+    console.log('ToStr:', num1);
+    return '#' + num1 + '';
+}
+
+/**
+ * getFeature request handler. Gets a request with a point, and responds with a
+ * feature object indicating whether there is a feature at that point.
+ * @param {EventEmitter} call Call object for the handler to process
+ * @param {function(Error, feature)} callback Response callback
+ */
+function ToStr_SM(call, callback) {
+    callback(null, toStr(call.request));
+}
 
 function getServer() {
     var server = new grpc.Server();
     const s = protoDescriptor.NumbersService.service;
     //const s = numbersService.NumbersService.service;
     server.addProtoService(s, {
-      getFeature: getFeature,
-      listFeatures: listFeatures,
-      recordRoute: recordRoute,
-      routeChat: routeChat
+        ToStr: ToStr_SM,
+      //listFeatures: listFeatures,
+      //recordRoute: recordRoute,
+      //routeChat: routeChat
     });
     return server;
 }
