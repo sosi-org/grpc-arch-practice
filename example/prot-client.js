@@ -70,12 +70,17 @@ function demo1(finishedCalback) {
     } );
 
     console.log('q:call', call);
-/*
+
     call.on('data', function(feature) {
         console.log('Found stream data  "', feature);
     });
-    call.on('end', finishedCalback);
-*/
+
+    // why?
+    // call.on('end', finishedCalback);
+    call.on('end', () => finishedCalback(null, 'best result'));
+
+    //call.end('eee*');
+    // return call;
 }
 
 async.series([
