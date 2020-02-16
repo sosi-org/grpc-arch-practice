@@ -2,22 +2,47 @@ syntax = "proto3";
 
 // from https://grpc.io/docs/tutorials/basic/node/
 
-service RouteGuide {
+
+service NumbersService {
+  /*
     // funciton call (round-trip)
     rpc GetFeature(Point) returns (Feature) {}
 
     // streaming (Server)
-    rpc ListFeatures(Rectangle) returns (stream Feature) {}
+    //rpc ListFeatures(Rectangle) returns (stream Feature) {}
+    rpc StreamNumbers(Rectangle) returns (stream Feature) {}
 
     // streaming (client)
     rpc RecordRoute(stream Point) returns (RouteSummary) {}
 
     // bidir stearming
     // rpc RouteChat(stream RouteNote) returns (stream RouteNote) {}
+  */
+    rpc ToStr(Number) returns (NumStr) {}
+    rpc GetNextNumbers(Number) returns (stream NumStr) {}
+    rpc GenerateStrings(stream Number) returns (stream NumStr) {}
+    rpc AddNumbers(stream Number) returns (Number) {}
 }
 
+message Number {
+  int32 numval = 1;
+}
+message NumStr {
+  string strval = 1;
+}
+/*
 message Point {
   int32 latitude = 1;
   int32 longitude = 2;
 }
 
+
+message Feature {
+  // The name of the feature.
+  string name = 1;
+
+  // The point where the feature is detected.
+  Point location = 2;
+}
+// from https://github.com/grpc/grpc/blob/v1.27.0/examples/protos/route_guide.proto
+*/
