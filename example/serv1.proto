@@ -1,3 +1,5 @@
+syntax = "proto3";
+
 // from https://grpc.io/docs/tutorials/basic/node/
 
 service RouteGuide {
