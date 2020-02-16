@@ -18,14 +18,14 @@ var packageDefinition = protoLoader.loadSync(
      defaults: true,
      oneofs: true
     });
-var protoDescriptor = grpc.loadPackageDefinition(packageDefinition);
-// The protoDescriptor object has the full package hierarchy
+var protoPackageDef = grpc.loadPackageDefinition(packageDefinition);
+// The protoPackageDef object has the full package hierarchy
 
-console.log({protoDescriptor});
+console.log({protoPackageDef});
 
-var NumbersService = protoDescriptor.NumbersService;
+var NumbersService = protoPackageDef.NumbersService;
 /*
-console.log(protoDescriptor);
+console.log(protoPackageDef);
 console.log(numbersService);
 */
 
@@ -40,19 +40,20 @@ NumStr
 
 const SERVER_ADDRESS = 'localhost:50051';
 
-var clientStub = new protoDescriptor.NumbersService(SERVER_ADDRESS, grpc.credentials.createInsecure());
+var clientStub = new protoPackageDef.NumbersService(SERVER_ADDRESS, grpc.credentials.createInsecure());
 
 console.log('client', clientStub);
+console.log('client::', Object.keys(clientStub));
 console.log('okk');
 
-//var client2 = new protoDescriptor.Number(SERVER_ADDRESS, grpc.credentials.createInsecure());
+//var client2 = new protoPackageDef.Number(SERVER_ADDRESS, grpc.credentials.createInsecure());
 //console.log('client2', client2);
 
 
 function demo1(finishedCalback) {
     const p1 = 45;
     //console.log({clientStub})
-    // despite 'ToStr' not inside clientStub.
+    // despite 'ToStr' not seen as a key inside clientStub. Why??
     const call = clientStub.ToStr(p1, (error, result) => {
         if (error) {
             console.log('error detected:');
@@ -80,3 +81,15 @@ function demo1(finishedCalback) {
 async.series([
     demo1,
   ]);
+
+
+
+/* output:
+
+server: call.request { numval: 0 }
+Server: ToStr: { numval: 0 }
+ToStr.arguments() [Arguments] { '0': { numval: 0 } }
+result: { strval: '' }
+next: starting
+next: ok
+*/

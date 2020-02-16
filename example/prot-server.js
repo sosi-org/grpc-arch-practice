@@ -17,13 +17,13 @@ var packageDefinition = protoLoader.loadSync(
         defaults: true,
         oneofs: true
     });
-var protoDescriptor = grpc.loadPackageDefinition(packageDefinition);
-//console.log(Object.keys(protoDescriptor)); :
+var protoPackageDef = grpc.loadPackageDefinition(packageDefinition);
+//console.log(Object.keys(protoPackageDef)); :
 // [ 'NumbersService', 'Number', 'NumStr' ]
-console.log('>>', Object.keys(protoDescriptor.NumbersService));
+console.log('>>', Object.keys(protoPackageDef.NumbersService));
 
-// The protoDescriptor object has the full package hierarchy
-var numbersService = protoDescriptor.NumbersService;
+// The protoPackageDef object has the full package hierarchy
+var numbersService = protoPackageDef.NumbersService;
 console.log('11', numbersService);
 /*
 NumbersService: { ToStr, GetNextNumbers, GenerateStrings, AddNumbers }
@@ -54,7 +54,7 @@ function ToStr_SM(call, callback) {
 
 function getServer() {
     var server = new grpc.Server();
-    const s = protoDescriptor.NumbersService.service;
+    const s = protoPackageDef.NumbersService.service;
     //const s = numbersService.NumbersService.service;
     server.addProtoService(s, {
         ToStr: ToStr_SM,
