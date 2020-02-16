@@ -53,7 +53,7 @@ function demo1(finishedCalback) {
     const p1 = 45;
     //console.log({clientStub})
     // despite 'ToStr' not inside clientStub.
-    clientStub.ToStr(p1, (error, result) => {
+    const call = clientStub.ToStr(p1, (error, result) => {
         if (error) {
             console.log('error detected:');
             finishedCalback(error);
@@ -66,7 +66,15 @@ function demo1(finishedCalback) {
         finishedCalback();
         // finishedCalback(); ---> Error: Callback was already called.
         console.log('next: ok')
-    } )
+    } );
+
+    console.log('q:call', call);
+/*
+    call.on('data', function(feature) {
+        console.log('Found stream data  "', feature);
+    });
+    call.on('end', finishedCalback);
+*/
 }
 
 async.series([

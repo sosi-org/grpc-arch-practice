@@ -33,7 +33,8 @@ NumStr
 
 
 function toStr(num1) {
-    console.log('ToStr:', num1);
+    // Why is num1 === 0 ?
+    console.log('Server: ToStr:', num1);
     return '#' + num1 + '';
 }
 
@@ -44,6 +45,7 @@ function toStr(num1) {
  * @param {function(Error, feature)} callback Response callback
  */
 function ToStr_SM(call, callback) {
+    console.log('server: call.request', call.request);
     callback(null, toStr(call.request));
 }
 
