@@ -21,12 +21,16 @@ var packageDefinition = protoLoader.loadSync(
 var protoDescriptor = grpc.loadPackageDefinition(packageDefinition);
 // The protoDescriptor object has the full package hierarchy
 
-var numbersService = protoDescriptor.NumbersService;
+console.log({protoDescriptor});
+
+var NumbersService = protoDescriptor.NumbersService;
 /*
 console.log(protoDescriptor);
 console.log(numbersService);
 */
 
+console.log('----')
+console.log('numbersService::::', NumbersService);
 /*
 NumbersService: { ToStr, GetNextNumbers, GenerateStrings, AddNumbers }
 Number
@@ -36,7 +40,10 @@ NumStr
 
 const SERVER_ADDRESS = 'localhost:50051';
 
-var client = new numbersService.NumbersService(SERVER_ADDRESS, grpc.credentials.createInsecure());
+var client = new protoDescriptor.NumbersService(SERVER_ADDRESS, grpc.credentials.createInsecure());
 
 console.log('client', client);
-console.log('okk')
+console.log('okk');
+
+//var client2 = new protoDescriptor.Number(SERVER_ADDRESS, grpc.credentials.createInsecure());
+//console.log('client2', client2);

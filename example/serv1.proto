@@ -19,9 +19,11 @@ service NumbersService {
     // rpc RouteChat(stream RouteNote) returns (stream RouteNote) {}
   */
     rpc ToStr(Number) returns (NumStr) {}
+  /*
     rpc GetNextNumbers(Number) returns (stream NumStr) {}
     rpc GenerateStrings(stream Number) returns (stream NumStr) {}
     rpc AddNumbers(stream Number) returns (Number) {}
+  */
 }
 
 message Number {
