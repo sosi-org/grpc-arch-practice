@@ -18,9 +18,13 @@ var packageDefinition = protoLoader.loadSync(
         oneofs: true
     });
 var protoDescriptor = grpc.loadPackageDefinition(packageDefinition);
+//console.log(Object.keys(protoDescriptor)); :
+// [ 'NumbersService', 'Number', 'NumStr' ]
+console.log('>>', Object.keys(protoDescriptor.NumbersService));
+
 // The protoDescriptor object has the full package hierarchy
 var numbersService = protoDescriptor.NumbersService;
-
+console.log('11', numbersService);
 /*
 NumbersService: { ToStr, GetNextNumbers, GenerateStrings, AddNumbers }
 Number
@@ -36,8 +40,9 @@ console.log('okk')
 
 function getServer() {
     var server = new grpc.Server();
-    //  error here:
-    server.addProtoService(numbersService.NumbersService.service, {
+    const s = protoDescriptor.NumbersService.service;
+    //const s = numbersService.NumbersService.service;
+    server.addProtoService(s, {
       getFeature: getFeature,
       listFeatures: listFeatures,
       recordRoute: recordRoute,
