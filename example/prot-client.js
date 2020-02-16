@@ -40,10 +40,35 @@ NumStr
 
 const SERVER_ADDRESS = 'localhost:50051';
 
-var client = new protoDescriptor.NumbersService(SERVER_ADDRESS, grpc.credentials.createInsecure());
+var clientStub = new protoDescriptor.NumbersService(SERVER_ADDRESS, grpc.credentials.createInsecure());
 
-console.log('client', client);
+console.log('client', clientStub);
 console.log('okk');
 
 //var client2 = new protoDescriptor.Number(SERVER_ADDRESS, grpc.credentials.createInsecure());
 //console.log('client2', client2);
+
+
+function demo1(finishedCalback) {
+    const p1 = 45;
+    //console.log({clientStub})
+    // despite 'ToStr' not inside clientStub.
+    clientStub.ToStr(p1, (error, result) => {
+        if (error) {
+            console.log('error detected:');
+            finishedCalback(error);
+            return;
+        }
+        // INCORRECT RESULT:
+        console.log('result:', result)
+        // next()
+        console.log('next: starting')
+        finishedCalback();
+        // finishedCalback(); ---> Error: Callback was already called.
+        console.log('next: ok')
+    } )
+}
+
+async.series([
+    demo1,
+  ]);
