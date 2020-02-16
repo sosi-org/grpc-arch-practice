@@ -1,0 +1,21 @@
+// from https://grpc.io/docs/tutorials/basic/node/
+
+service RouteGuide {
+    // funciton call (round-trip)
+    rpc GetFeature(Point) returns (Feature) {}
+
+    // streaming (Server)
+    rpc ListFeatures(Rectangle) returns (stream Feature) {}
+
+    // streaming (client)
+    rpc RecordRoute(stream Point) returns (RouteSummary) {}
+
+    // bidir stearming
+    // rpc RouteChat(stream RouteNote) returns (stream RouteNote) {}
+}
+
+message Point {
+  int32 latitude = 1;
+  int32 longitude = 2;
+}
+
