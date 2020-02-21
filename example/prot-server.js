@@ -1,17 +1,23 @@
 /*
 Based on https://github.com/grpc/grpc/blob/v1.27.0/examples/node/dynamic_codegen/route_guide/route_guide_client.js
+Also read:
+https://techblog.fexcofts.com/2018/07/20/grpc-nodejs-chat-example/
+
 */
 
 var async = require('async');
 
-var PROTO_PATH = __dirname + '/serv1.proto';
-
 var grpc = require('grpc');
 var protoLoader = require('@grpc/proto-loader');
+
+var PROTO_PATH = __dirname + '/serv1.proto';
+
+//Load protobuf
 // Suggested options for similarity to existing grpc.load behavior
 var packageDefinition = protoLoader.loadSync(
     PROTO_PATH,
-    {keepCase: true,
+    {
+        keepCase: true,
         longs: String,
         enums: String,
         defaults: true,
