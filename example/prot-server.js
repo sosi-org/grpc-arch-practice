@@ -6,8 +6,9 @@ https://techblog.fexcofts.com/2018/07/20/grpc-nodejs-chat-example/
 */
 
 var async = require('async');
-
 var grpc = require('grpc');
+
+function loadProtobuf() {
 var protoLoader = require('@grpc/proto-loader');
 
 var PROTO_PATH = __dirname + '/serv1.proto';
@@ -26,6 +27,11 @@ var packageDefinition = protoLoader.loadSync(
 var protoPackageDef = grpc.loadPackageDefinition(packageDefinition);
 //console.log(Object.keys(protoPackageDef)); :
 // [ 'NumbersService', 'Number', 'NumStr' ]
+return protoPackageDef;
+}
+
+const protoPackageDef = loadProtobuf();
+
 console.log('>>', Object.keys(protoPackageDef.NumbersService));
 
 // The protoPackageDef object has the full package hierarchy
