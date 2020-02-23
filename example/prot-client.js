@@ -52,7 +52,10 @@ console.log();
 
 
 function demo1(finishedCalback) {
-    const p1 = 45;
+    // const p1 = 45;
+    const p1 = { numval: 45 };
+    // SOLVED! argument needs to be in the format specified by the .proto
+
     //console.log({clientStub})
     // despite 'ToStr' not seen as a key inside clientStub. Why??
     const call = clientStub.ToStr(p1, (error, result) => { /*received*/
