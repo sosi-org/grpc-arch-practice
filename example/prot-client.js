@@ -12,7 +12,7 @@ const grpc = require('grpc');
 Load protobuf: dynamic version
 proto-require()!
 */
-function loadProtobuf(proto_file_path) {
+function require_protobuf(proto_file_path) {
 
     const protoLoader = require('@grpc/proto-loader');
 
@@ -34,7 +34,7 @@ function loadProtobuf(proto_file_path) {
 
 const PROTO_PATH = __dirname + '/serv1.proto';
 
-const { NumbersService, Number, NumStr} = loadProtobuf(PROTO_PATH);
+const { NumbersService, Number, NumStr} = require_protobuf(PROTO_PATH);
 
 /*
 console.log(protoPackageDef);

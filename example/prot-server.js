@@ -11,7 +11,7 @@ const async = require('async');
 const grpc = require('grpc');
 
 /* Load protobuf: dynamic version */
-function loadProtobuf(proto_file_path) {
+function require_protobuf(proto_file_path) {
 
     const protoLoader = require('@grpc/proto-loader');
 
@@ -33,7 +33,7 @@ function loadProtobuf(proto_file_path) {
 
 const PROTO_PATH = __dirname + '/serv1.proto';
 
-const protoPackageDef = loadProtobuf(PROTO_PATH);
+const protoPackageDef = require_protobuf(PROTO_PATH);
 
 console.log('>>', Object.keys(protoPackageDef.NumbersService));
 
