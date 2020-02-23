@@ -41,8 +41,9 @@ function experimenting_with_schemas() {
     console.log('outtype', outtype);
     //console.log('----', json_.format());
 
-    chai.expect({numval:2}).to.be.jsonSchema(intype);
-    chai.expect({numval:2}).to.be.jsonSchema(outtype);
+    const obj = {numval:2};
+    chai.expect(obj).to.be.jsonSchema(intype);
+    chai.expect(obj).to.be.jsonSchema(outtype);
 
     console.log();
     console.log();
@@ -59,6 +60,63 @@ function experiments_2() {
     console.log('s', s);
 }
 // experiments_2 ();
+
+function experiment_3() {
+    const inptype =
+    {
+        "type": "map",
+        "detail": [
+            {
+                "type": "number",
+                "name": "numval"
+            }
+        ]
+    };
+    const outtype =
+    {
+        "type": "map",
+        "detail": [
+            {
+                "type": "string",
+                "name": "strval"
+            }
+        ]
+    };
+    // https://roger13.github.io/SwagDefGen/
+    const t2 =
+    {
+        "numval": {
+            "type": "integer",
+            "format": "int32"
+        },
+        "required": ['numval'],
+        //additionalProperties: false, //why fails?
+    };
+    const t3 =
+    {
+        "strval": {
+            "type": "string",
+            //required: true,
+        },
+        "required": ['strval'],
+        //additionalProperties: false, //why fails?
+    };
+    const chai = require('chai');
+    chai.use(require('chai-json-schema'));
+
+    const obj = {numval: 2};
+    const sobj = {strval: 'some text'};
+    chai.expect(obj).to.be.jsonSchema(t2);
+    chai.expect(obj).to.not.be.jsonSchema(t3);
+    chai.expect(sobj).to.be.jsonSchema(t3);
+    chai.expect(sobj).to.not.be.jsonSchema(t2);
+
+    //chai.expect(obj).to.be.jsonSchema(inptype);
+    //chai.expect(obj).to.be.jsonSchema(outtype);
+    console.log('ok');
+}
+
+experiment_3();
 
 // num1 = { numval: * }
 function toStr({numval:num1}) {
