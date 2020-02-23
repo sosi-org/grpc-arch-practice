@@ -24,6 +24,8 @@ Number
 NumStr
 */
 
+console.log('---', NumStr);
+
 function experimenting_with_schemas() {
     const chai = require('chai');
     chai.use(require('chai-json-schema'));
@@ -116,7 +118,20 @@ function experiment_3() {
     console.log('ok');
 }
 
-experiment_3();
+//experiment_3();
+
+function experiment_4() {
+    const fs = require('fs');
+    const schema = require('protocol-buffers-schema');
+    var sch = schema.parse(fs.readFileSync(PROTO_PATH))
+    //schema.parse(protobufSchemaBufferOrString)
+
+    //console.log('...',schema.stringify(sch));
+    console.log('........................................');
+    console.log(sch);
+}
+
+// experiment_4()
 
 // num1 = { numval: * }
 function toStr({numval:num1}) {
@@ -136,7 +151,10 @@ function toStr({numval:num1}) {
  */
 function ToStr_handler(callObj, send_result_callback) {
     // callObj.next_call()
-    console.log('server: callObj received', callObj);
+    console.log('serv**er: callObj received', callObj);
+    /*
+    callObj.metadata = Metadata {  _internal_repr: { 'user-agent': [ 'grpc-node/1.24.2 grpc-c/8.0.0 (linux; chttp2; ganges)' ] }, flags: 0 }
+    */
     console.log('server: callObj.request=', callObj.request);
 
     send_result_callback(null, toStr(callObj.request));
