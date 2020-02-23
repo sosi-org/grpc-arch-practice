@@ -1,16 +1,18 @@
+'use strict';
+
 /*
 Based on https://github.com/grpc/grpc/blob/v1.27.0/examples/node/dynamic_codegen/route_guide/route_guide_client.js
 */
 
-var async = require('async');
+const async = require('async');
 
-var PROTO_PATH = //__dirname + '/../../../protos/route_guide.proto';
+const PROTO_PATH = //__dirname + '/../../../protos/route_guide.proto';
 	__dirname + '/serv1.proto';
 
-    var grpc = require('grpc');
-var protoLoader = require('@grpc/proto-loader');
+const grpc = require('grpc');
+const protoLoader = require('@grpc/proto-loader');
 // Suggested options for similarity to existing grpc.load behavior
-var packageDefinition = protoLoader.loadSync(
+const packageDefinition = protoLoader.loadSync(
     PROTO_PATH,
     {keepCase: true,
      longs: String,
@@ -18,12 +20,12 @@ var packageDefinition = protoLoader.loadSync(
      defaults: true,
      oneofs: true
     });
-var protoPackageDef = grpc.loadPackageDefinition(packageDefinition);
+const protoPackageDef = grpc.loadPackageDefinition(packageDefinition);
 // The protoPackageDef object has the full package hierarchy
 
 console.log({protoPackageDef});
 
-var NumbersService = protoPackageDef.NumbersService;
+const NumbersService = protoPackageDef.NumbersService;
 /*
 console.log(protoPackageDef);
 console.log(numbersService);
@@ -40,7 +42,7 @@ NumStr
 
 const SERVER_ADDRESS = 'localhost:50051';
 
-var clientStub = new protoPackageDef.NumbersService(SERVER_ADDRESS, grpc.credentials.createInsecure());
+const clientStub = new protoPackageDef.NumbersService(SERVER_ADDRESS, grpc.credentials.createInsecure());
 
 console.log('client: stub', clientStub);
 console.log('client: stub: keys=', Object.keys(clientStub));

@@ -1,3 +1,5 @@
+'use strict';
+
 /*
 Based on https://github.com/grpc/grpc/blob/v1.27.0/examples/node/dynamic_codegen/route_guide/route_guide_client.js
 Also read:
@@ -5,17 +7,17 @@ https://techblog.fexcofts.com/2018/07/20/grpc-nodejs-chat-example/
 
 */
 
-var async = require('async');
-var grpc = require('grpc');
+const async = require('async');
+const grpc = require('grpc');
 
 function loadProtobuf() {
-var protoLoader = require('@grpc/proto-loader');
+const protoLoader = require('@grpc/proto-loader');
 
-var PROTO_PATH = __dirname + '/serv1.proto';
+const PROTO_PATH = __dirname + '/serv1.proto';
 
 //Load protobuf
 // Suggested options for similarity to existing grpc.load behavior
-var packageDefinition = protoLoader.loadSync(
+const packageDefinition = protoLoader.loadSync(
     PROTO_PATH,
     {
         keepCase: true,
@@ -24,7 +26,7 @@ var packageDefinition = protoLoader.loadSync(
         defaults: true,
         oneofs: true
     });
-var protoPackageDef = grpc.loadPackageDefinition(packageDefinition);
+const protoPackageDef = grpc.loadPackageDefinition(packageDefinition);
 //console.log(Object.keys(protoPackageDef)); :
 // [ 'NumbersService', 'Number', 'NumStr' ]
 return protoPackageDef;
@@ -35,7 +37,7 @@ const protoPackageDef = loadProtobuf();
 console.log('>>', Object.keys(protoPackageDef.NumbersService));
 
 // The protoPackageDef object has the full package hierarchy
-var numbersService = protoPackageDef.NumbersService;
+const numbersService = protoPackageDef.NumbersService;
 console.log('11', numbersService);
 /*
 NumbersService: { ToStr, GetNextNumbers, GenerateStrings, AddNumbers }
