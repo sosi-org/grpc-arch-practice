@@ -17,7 +17,7 @@ const PROTO_PATH = __dirname + '/serv1.proto';
 // require-like usage
 const { NumbersService, Number, NumStr} = require_protobuf(PROTO_PATH);
 
-console.log('>>', Object.keys(NumbersService));
+console.log('>>', Object.keys(NumbersService)); //[ 'super_', 'service' ]
 console.log('*>>>>>', NumbersService);  //  function ServiceClient(address, credentials, options)
 /*
 NumbersService: { ToStr, GetNextNumbers, GenerateStrings, AddNumbers }
@@ -32,10 +32,9 @@ function toStr({numval:num1}) {
     console.log('Server: ToStr:', num1); //  { numval: 0 }
     console.log('        ToStr.arguments()', arguments);
     // const result = '#' + num1 + '';
-    const result = { strval: '#' + num1 + '' }
-
+    const strval = '#' + num1 + '';
     console.log('        ToStr: result', result);
-    return result;
+    return { strval: strval};
 }
 
 /**
