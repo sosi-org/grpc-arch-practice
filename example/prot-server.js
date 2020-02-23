@@ -10,27 +10,8 @@ https://techblog.fexcofts.com/2018/07/20/grpc-nodejs-chat-example/
 const async = require('async');
 const grpc = require('grpc');
 
-/* Load protobuf: dynamic version */
-function require_protobuf(proto_file_path) {
 
-    const protoLoader = require('@grpc/proto-loader');
-
-    // Suggested options for similarity to existing grpc.load behavior
-    const packageDefinition = protoLoader.loadSync(
-        proto_file_path,
-        {
-            keepCase: true,
-            longs: String,
-            enums: String,
-            defaults: true,
-            oneofs: true
-        });
-    const protoPackageDef = grpc.loadPackageDefinition(packageDefinition);
-    // The protoPackageDef object has the full package hierarchy
-    // { NumbersService, Number, NumStr}
-    return protoPackageDef;
-}
-
+const require_protobuf = require('./require-protobuf.js');
 const PROTO_PATH = __dirname + '/serv1.proto';
 
 // require-like usage
