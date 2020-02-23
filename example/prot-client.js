@@ -10,6 +10,9 @@ const PROTO_PATH = //__dirname + '/../../../protos/route_guide.proto';
 	__dirname + '/serv1.proto';
 
 const grpc = require('grpc');
+
+/* dynamic version */
+function loadProtobuf() {
 const protoLoader = require('@grpc/proto-loader');
 // Suggested options for similarity to existing grpc.load behavior
 const packageDefinition = protoLoader.loadSync(
@@ -24,7 +27,10 @@ const protoPackageDef = grpc.loadPackageDefinition(packageDefinition);
 // The protoPackageDef object has the full package hierarchy
 
 console.log({protoPackageDef});
+return protoPackageDef;
+}
 
+const protoPackageDef = loadProtobuf();
 const NumbersService = protoPackageDef.NumbersService;
 /*
 console.log(protoPackageDef);
