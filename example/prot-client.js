@@ -8,7 +8,10 @@ const async = require('async');
 
 const grpc = require('grpc');
 
-/* Load protobuf: dynamic version */
+/*
+Load protobuf: dynamic version
+proto-require()!
+*/
 function loadProtobuf(proto_file_path) {
 
     const protoLoader = require('@grpc/proto-loader');
@@ -31,8 +34,8 @@ function loadProtobuf(proto_file_path) {
 
 const PROTO_PATH = __dirname + '/serv1.proto';
 
-const protoPackageDef = loadProtobuf(PROTO_PATH);
-const NumbersService = protoPackageDef.NumbersService;
+const { NumbersService, Number, NumStr} = loadProtobuf(PROTO_PATH);
+
 /*
 console.log(protoPackageDef);
 console.log(numbersService);
@@ -49,14 +52,14 @@ NumStr
 
 const SERVER_ADDRESS = 'localhost:50051';
 
-const clientStub = new protoPackageDef.NumbersService(SERVER_ADDRESS, grpc.credentials.createInsecure());
+const clientStub = new NumbersService(SERVER_ADDRESS, grpc.credentials.createInsecure());
 
 console.log('client: stub', clientStub);
 console.log('client: stub: keys=', Object.keys(clientStub));
 console.log('client stub ready.');
 console.log();
 
-//var client2 = new protoPackageDef.Number(SERVER_ADDRESS, grpc.credentials.createInsecure());
+//var client2 = new Number(SERVER_ADDRESS, grpc.credentials.createInsecure());
 //console.log('client2', client2);
 
 
