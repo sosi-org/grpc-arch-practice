@@ -55,7 +55,7 @@ function demo1(finishedCalback) {
         finishedCalback();
         // finishedCalback(); ---> Error: Callback was already called.
         //console.log('next: ok')
-        console.log('client: done.')
+        console.log('client: receiving return value: done.')
     } );
 
     console.log('client: call sent: call object=', call);
@@ -77,6 +77,7 @@ function demo1(finishedCalback) {
         console.log('        An error has occurred and the stream has been closed.');
     });
 
+    // is called in non-stream mode. (None of the above on-xx were called.)
     call.on('status', function(...args) {
         console.log('client: process status event:');
         /*
