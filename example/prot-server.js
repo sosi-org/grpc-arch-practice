@@ -18,10 +18,7 @@ const PROTO_PATH = __dirname + '/serv1.proto';
 const { NumbersService, Number, NumStr} = require_protobuf(PROTO_PATH);
 
 console.log('>>', Object.keys(NumbersService));
-
-// The protoPackageDef object has the full package hierarchy
-const numbersService = NumbersService;
-
+console.log('*>>>>>', NumbersService);  //  function ServiceClient(address, credentials, options)
 /*
 NumbersService: { ToStr, GetNextNumbers, GenerateStrings, AddNumbers }
 Number
@@ -42,23 +39,22 @@ function toStr({numval:num1}) {
 }
 
 /**
- * getFeature request handler. Gets a request with a point, and responds with a
- * feature object indicating whether there is a feature at that point.
- * @param {EventEmitter} call Call object for the handler to process
- * @param {function(Error, feature)} callback Response callback
+ * ToStr request handler. Gets a request and responds ... .
+ * @param {EventEmitter} callObj - The Call object for the handler to process
+ * @param {function(Error, feature)} send_result_callback - The Response callback
  */
-function ToStr_SM(call, callback) {
-    // call.next_call()
-    console.log('server: call received', call);
-    console.log('server: call.request=', call.request);
-    callback(null, toStr(call.request));
+function ToStr_handler(callObj, send_result_callback) {
+    // callObj.next_call()
+    console.log('server: callObj received', callObj);
+    console.log('server: callObj.request=', callObj.request);
+    send_result_callback(null, toStr(callObj.request));
 }
 
-function getServer() {
-    var server = new grpc.Server();
-    const s = NumbersService.service;
-    server.addProtoService(s, {
-        ToStr: ToStr_SM,
+function newServer() {
+    const server = new grpc.Server();
+    const servc = NumbersService.service;
+    server.addProtoService(servc, {
+        ToStr: ToStr_handler,
       //listFeatures: listFeatures,
       //recordRoute: recordRoute,
       //routeChat: routeChat
@@ -67,9 +63,10 @@ function getServer() {
 }
 
 const SERVING_ADDRESS = '0.0.0.0:50051';
+
 function main() {
     // If this is run as a script, start a server on an unused port
-    var routeServer = getServer();
+    var routeServer = newServer();
     routeServer.bind(SERVING_ADDRESS, grpc.ServerCredentials.createInsecure());
 
     routeServer.start();

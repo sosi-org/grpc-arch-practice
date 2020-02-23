@@ -9,20 +9,11 @@ const async = require('async');
 const grpc = require('grpc');
 
 const require_protobuf = require('./require-protobuf');
-console.log('***require_protobuf', require_protobuf);
 
 const PROTO_PATH = __dirname + '/serv1.proto';
 
 // require-like usage
 const { NumbersService, Number, NumStr} = require_protobuf(PROTO_PATH);
-
-/*
-console.log(protoPackageDef);
-console.log(numbersService);
-*/
-
-console.log('----')
-console.log('numbersService::::', NumbersService);
 /*
 NumbersService: { ToStr, GetNextNumbers, GenerateStrings, AddNumbers }
 Number
