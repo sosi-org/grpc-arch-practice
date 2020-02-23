@@ -133,6 +133,14 @@ function experiment_4() {
 
 // experiment_4()
 
+
+function experiment_5() {
+    const chai = require('chai');
+    chai.expect({numval:4}).to.have.nested.property('numval');
+    chai.expect({strval:"df"}).to.have.nested.property('strval');
+}
+experiment_5();
+
 // num1 = { numval: * }
 function toStr({numval:num1}) {
     // Why is num1 === 0 ?
@@ -143,6 +151,8 @@ function toStr({numval:num1}) {
     console.log('        ToStr: result', strval);
     return { strval: strval};
 }
+
+const chai = require('chai');
 
 /**
  * ToStr request handler. Gets a request and responds ... .
@@ -156,8 +166,15 @@ function ToStr_handler(callObj, send_result_callback) {
     callObj.metadata = Metadata {  _internal_repr: { 'user-agent': [ 'grpc-node/1.24.2 grpc-c/8.0.0 (linux; chttp2; ganges)' ] }, flags: 0 }
     */
     console.log('server: callObj.request=', callObj.request);
+    //expect(callObj.request).to.have.nested.property('numval');
 
-    send_result_callback(null, toStr(callObj.request));
+    chai.expect(callObj.request).to.have.nested.property('numval');
+
+    const resultObj = toStr(callObj.request);
+
+    chai.expect(resultObj).to.have.nested.property('strval');
+
+    send_result_callback(null, resultObj);
 }
 
 function newServer() {
