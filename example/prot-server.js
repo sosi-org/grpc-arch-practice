@@ -10,7 +10,6 @@ https://techblog.fexcofts.com/2018/07/20/grpc-nodejs-chat-example/
 const async = require('async');
 const grpc = require('grpc');
 
-
 const require_protobuf = require('./require-protobuf.js');
 const PROTO_PATH = __dirname + '/serv1.proto';
 
@@ -25,6 +24,41 @@ Number
 NumStr
 */
 
+function experimenting_with_schemas() {
+    const chai = require('chai');
+    chai.use(require('chai-json-schema'));
+
+
+    var jsb = require('json-schema-builder');
+    //var schema = jsb.schema();
+    //const json = jsb.schema().json();
+    //jsb.integer()
+    const json_ = jsb; //.schema().json();
+    console.log(json_);
+    const intype = json_.object().property('numval', json_.number(), true);
+    const outtype = json_.object().property('strval', json_.string(), true);
+    console.log('intype', intype);
+    console.log('outtype', outtype);
+    //console.log('----', json_.format());
+
+    chai.expect({numval:2}).to.be.jsonSchema(intype);
+    chai.expect({numval:2}).to.be.jsonSchema(outtype);
+
+    console.log();
+    console.log();
+}
+
+// experimenting_with_schemas();
+
+function experiments_2() {
+    var mongoose = require('mongoose');
+    var Schema = mongoose.Schema;
+    const s = new Schema({
+        numval:  Number
+    });
+    console.log('s', s);
+}
+// experiments_2 ();
 
 // num1 = { numval: * }
 function toStr({numval:num1}) {
@@ -33,7 +67,7 @@ function toStr({numval:num1}) {
     console.log('        ToStr.arguments()', arguments);
     // const result = '#' + num1 + '';
     const strval = '#' + num1 + '';
-    console.log('        ToStr: result', result);
+    console.log('        ToStr: result', strval);
     return { strval: strval};
 }
 
@@ -46,6 +80,7 @@ function ToStr_handler(callObj, send_result_callback) {
     // callObj.next_call()
     console.log('server: callObj received', callObj);
     console.log('server: callObj.request=', callObj.request);
+
     send_result_callback(null, toStr(callObj.request));
 }
 
