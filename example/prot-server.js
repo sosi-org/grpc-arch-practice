@@ -11,25 +11,25 @@ const async = require('async');
 const grpc = require('grpc');
 
 function loadProtobuf() {
-const protoLoader = require('@grpc/proto-loader');
+    const protoLoader = require('@grpc/proto-loader');
 
-const PROTO_PATH = __dirname + '/serv1.proto';
+    const PROTO_PATH = __dirname + '/serv1.proto';
 
-//Load protobuf
-// Suggested options for similarity to existing grpc.load behavior
-const packageDefinition = protoLoader.loadSync(
-    PROTO_PATH,
-    {
-        keepCase: true,
-        longs: String,
-        enums: String,
-        defaults: true,
-        oneofs: true
-    });
-const protoPackageDef = grpc.loadPackageDefinition(packageDefinition);
-//console.log(Object.keys(protoPackageDef)); :
-// [ 'NumbersService', 'Number', 'NumStr' ]
-return protoPackageDef;
+    //Load protobuf
+    // Suggested options for similarity to existing grpc.load behavior
+    const packageDefinition = protoLoader.loadSync(
+        PROTO_PATH,
+        {
+            keepCase: true,
+            longs: String,
+            enums: String,
+            defaults: true,
+            oneofs: true
+        });
+    const protoPackageDef = grpc.loadPackageDefinition(packageDefinition);
+    //console.log(Object.keys(protoPackageDef)); :
+    // [ 'NumbersService', 'Number', 'NumStr' ]
+    return protoPackageDef;
 }
 
 const protoPackageDef = loadProtobuf();

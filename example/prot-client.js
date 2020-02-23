@@ -13,21 +13,22 @@ const grpc = require('grpc');
 
 /* dynamic version */
 function loadProtobuf() {
-const protoLoader = require('@grpc/proto-loader');
-// Suggested options for similarity to existing grpc.load behavior
-const packageDefinition = protoLoader.loadSync(
-    PROTO_PATH,
-    {keepCase: true,
-     longs: String,
-     enums: String,
-     defaults: true,
-     oneofs: true
-    });
-const protoPackageDef = grpc.loadPackageDefinition(packageDefinition);
-// The protoPackageDef object has the full package hierarchy
+    const protoLoader = require('@grpc/proto-loader');
+    // Suggested options for similarity to existing grpc.load behavior
+    const packageDefinition = protoLoader.loadSync(
+        PROTO_PATH,
+        {keepCase: true,
+        longs: String,
+        enums: String,
+        defaults: true,
+        oneofs: true
+        });
+    const protoPackageDef = grpc.loadPackageDefinition(packageDefinition);
+    // The protoPackageDef object has the full package hierarchy
 
-console.log({protoPackageDef});
-return protoPackageDef;
+    // { NumbersService, Number, NumStr}
+
+    return protoPackageDef;
 }
 
 const protoPackageDef = loadProtobuf();
