@@ -6,32 +6,32 @@ Based on https://github.com/grpc/grpc/blob/v1.27.0/examples/node/dynamic_codegen
 
 const async = require('async');
 
-const PROTO_PATH = //__dirname + '/../../../protos/route_guide.proto';
-	__dirname + '/serv1.proto';
-
 const grpc = require('grpc');
 
-/* dynamic version */
-function loadProtobuf() {
+/* Load protobuf: dynamic version */
+function loadProtobuf(proto_file_path) {
+
     const protoLoader = require('@grpc/proto-loader');
+
     // Suggested options for similarity to existing grpc.load behavior
     const packageDefinition = protoLoader.loadSync(
-        PROTO_PATH,
-        {keepCase: true,
-        longs: String,
-        enums: String,
-        defaults: true,
-        oneofs: true
+        proto_file_path,
+        {
+            keepCase: true,
+            longs: String,
+            enums: String,
+            defaults: true,
+            oneofs: true
         });
     const protoPackageDef = grpc.loadPackageDefinition(packageDefinition);
     // The protoPackageDef object has the full package hierarchy
-
     // { NumbersService, Number, NumStr}
-
     return protoPackageDef;
 }
 
-const protoPackageDef = loadProtobuf();
+const PROTO_PATH = __dirname + '/serv1.proto';
+
+const protoPackageDef = loadProtobuf(PROTO_PATH);
 const NumbersService = protoPackageDef.NumbersService;
 /*
 console.log(protoPackageDef);

@@ -10,15 +10,14 @@ https://techblog.fexcofts.com/2018/07/20/grpc-nodejs-chat-example/
 const async = require('async');
 const grpc = require('grpc');
 
-function loadProtobuf() {
+/* Load protobuf: dynamic version */
+function loadProtobuf(proto_file_path) {
+
     const protoLoader = require('@grpc/proto-loader');
 
-    const PROTO_PATH = __dirname + '/serv1.proto';
-
-    //Load protobuf
     // Suggested options for similarity to existing grpc.load behavior
     const packageDefinition = protoLoader.loadSync(
-        PROTO_PATH,
+        proto_file_path,
         {
             keepCase: true,
             longs: String,
@@ -27,12 +26,14 @@ function loadProtobuf() {
             oneofs: true
         });
     const protoPackageDef = grpc.loadPackageDefinition(packageDefinition);
-    //console.log(Object.keys(protoPackageDef)); :
-    // [ 'NumbersService', 'Number', 'NumStr' ]
+    // The protoPackageDef object has the full package hierarchy
+    // { NumbersService, Number, NumStr}
     return protoPackageDef;
 }
 
-const protoPackageDef = loadProtobuf();
+const PROTO_PATH = __dirname + '/serv1.proto';
+
+const protoPackageDef = loadProtobuf(PROTO_PATH);
 
 console.log('>>', Object.keys(protoPackageDef.NumbersService));
 
