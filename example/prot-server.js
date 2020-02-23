@@ -33,13 +33,14 @@ function require_protobuf(proto_file_path) {
 
 const PROTO_PATH = __dirname + '/serv1.proto';
 
-const protoPackageDef = require_protobuf(PROTO_PATH);
+// require-like usage
+const { NumbersService, Number, NumStr} = require_protobuf(PROTO_PATH);
 
-console.log('>>', Object.keys(protoPackageDef.NumbersService));
+console.log('>>', Object.keys(NumbersService));
 
 // The protoPackageDef object has the full package hierarchy
-const numbersService = protoPackageDef.NumbersService;
-console.log('11', numbersService);
+const numbersService = NumbersService;
+
 /*
 NumbersService: { ToStr, GetNextNumbers, GenerateStrings, AddNumbers }
 Number
@@ -74,8 +75,7 @@ function ToStr_SM(call, callback) {
 
 function getServer() {
     var server = new grpc.Server();
-    const s = protoPackageDef.NumbersService.service;
-    //const s = numbersService.NumbersService.service;
+    const s = NumbersService.service;
     server.addProtoService(s, {
         ToStr: ToStr_SM,
       //listFeatures: listFeatures,

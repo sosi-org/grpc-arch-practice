@@ -34,6 +34,7 @@ function require_protobuf(proto_file_path) {
 
 const PROTO_PATH = __dirname + '/serv1.proto';
 
+// require-like usage
 const { NumbersService, Number, NumStr} = require_protobuf(PROTO_PATH);
 
 /*
