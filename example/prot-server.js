@@ -44,11 +44,14 @@ NumStr
 */
 
 
-function toStr(num1) {
+// num1 = { numval: * }
+function toStr({numval:num1}) {
     // Why is num1 === 0 ?
     console.log('Server: ToStr:', num1); //  { numval: 0 }
     console.log('        ToStr.arguments()', arguments);
-    result = '#' + num1 + '';
+    // const result = '#' + num1 + '';
+    const result = { strval: '#' + num1 + '' }
+
     console.log('        ToStr: result', result);
     return result;
 }
