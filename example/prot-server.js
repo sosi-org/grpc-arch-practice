@@ -59,8 +59,8 @@ function toStr(num1) {
  */
 function ToStr_SM(call, callback) {
     // call.next_call()
-    console.log('server: call', call);
-    console.log('server: call.request', call.request);
+    console.log('server: call received', call);
+    console.log('server: call.request=', call.request);
     callback(null, toStr(call.request));
 }
 
