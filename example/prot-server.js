@@ -32,6 +32,7 @@ const x__ = require('./schema-validation-practice')(NumStr);
 // num1 = { numval: * }
 function toStr({numval:num1}) {
     // Why is num1 === 0 ?
+    chai.expect(num1).to.not.be.undefined;
     console.log('Server: ToStr:', num1); //  { numval: 0 }
     console.log('        ToStr.arguments()', arguments);
     // const result = '#' + num1 + '';
