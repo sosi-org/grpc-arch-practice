@@ -103,6 +103,8 @@ function experiment_3() {
 
 //experiment_3();
 
+const PROTO_PATH = __dirname + '/serv1.proto';
+
 function experiment_4() {
   const fs = require('fs');
   const schema = require('protocol-buffers-schema');
@@ -110,12 +112,32 @@ function experiment_4() {
   //schema.parse(protobufSchemaBufferOrString)
 
   //console.log('...',schema.stringify(sch));
-  console.log('........................................');
+  console.log('........................................SCHEMA:');
   console.log(sch);
-}
 
-// experiment_4()
-// process.exit(0);
+  /*
+  // Trying to extract the schema directly frmo the .proto file:
+
+  const t2 = sch.messages.
+  TODO: convert sch to swagger-style schema.
+
+  */
+
+  /*
+
+  chai.use(require('chai-json-schema'));
+  const obj = {numval: 2};
+  const sobj = {strval: 'some text'};
+  chai.expect(obj).to.be.jsonSchema(t2);
+  chai.expect(obj).to.not.be.jsonSchema(t3);
+  */
+
+}
+/*
+experiment_4()
+console.log('exiting');
+process.exit(0);
+*/
 
 function experiment_5() {
   const chai = require('chai');
