@@ -1,0 +1,4 @@
+Azure notes:
+
+Resource groups has a region
+sohail_res_group
