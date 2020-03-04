@@ -2,3 +2,16 @@ Azure notes:
 
 Resource groups has a region
 sohail_res_group
+
+
+Code plugin intallation internally called:
+
+#  brew uninstall azure-functions-core-tools
+#  ... azure-functions-core-tools@2 from azure/functions
+
+
+echo https://blog.gruntwork.io/an-introduction-to-terraform-f17df9c6d180#3ec6
+
+
+TF=~/cs/terraform/terraform
+
