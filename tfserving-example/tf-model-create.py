@@ -1,5 +1,7 @@
 # TensorFlow and tf.keras
 
+# Bsaed on: https://www.tensorflow.org/tfx/tutorials/serving/rest_simple
+
 # print("Installing dependencies for Colab environment")
 # !pip install -Uq grpcio==1.26.0
 
@@ -89,8 +91,21 @@ def save_model(model):
     print('\nSaved model:')
     #!ls -l {export_path}
     os.system(f'ls -l {export_path}')
+    return export_path
 
+    """
+    assets
+    saved_model.pb
+    variables
+    """
 
-train_images, train_labels, test_images, test_labels, class_names = load_dataset()
-model = train_eval(train_images, train_labels, test_images, test_labels)
-save_model(model)
+def create_model():
+  train_images, train_labels, test_images, test_labels, class_names = load_dataset()
+  model = train_eval(train_images, train_labels, test_images, test_labels)
+  export_path = save_model(model)
+  return export_path
+
+# export_path = create_model()
+
+export_path = '/var/folders/5g/kz1p_241503bfrqndt8qy7640000gn/T/1'
+os.system(f'saved_model_cli show --dir {export_path} --all')
