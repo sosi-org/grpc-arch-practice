@@ -12,10 +12,12 @@ import matplotlib.pyplot as plt
 import os
 import subprocess
 
+#def tf_version():
 print('TensorFlow version: {}'.format(tf.__version__))
 # TensorFlow version: 2.2.0
 # ----- tf version settled -----------------
 
+#def load_dataset():
 print('Loading fashion-mnist dataset')
 
 fashion_mnist = keras.datasets.fashion_mnist
@@ -38,3 +40,22 @@ print('test_images.shape: {}, of {}'.format(test_images.shape, test_images.dtype
 
 
 # Train and evaluate the model
+model = keras.Sequential([
+  keras.layers.Conv2D(input_shape=(28,28,1), filters=8, kernel_size=3,
+                      strides=2, activation='relu', name='Conv1'),
+  keras.layers.Flatten(),
+  keras.layers.Dense(10, activation=tf.nn.softmax, name='Softmax')
+])
+model.summary()
+
+testing = False
+epochs = 5
+
+model.compile(optimizer='adam',
+              loss='sparse_categorical_crossentropy',
+              metrics=['accuracy'])
+model.fit(train_images, train_labels, epochs=epochs)
+
+test_loss, test_acc = model.evaluate(test_images, test_labels)
+print('\nTest accuracy: {}'.format(test_acc))
+
