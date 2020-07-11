@@ -59,3 +59,28 @@ model.fit(train_images, train_labels, epochs=epochs)
 test_loss, test_acc = model.evaluate(test_images, test_labels)
 print('\nTest accuracy: {}'.format(test_acc))
 
+
+def save_model():
+  # Fetch the Keras session and save the model
+  # The signature definition is defined by the input and output tensors,
+  # and stored with the default serving key
+  import tempfile
+
+  MODEL_DIR = tempfile.gettempdir()
+  version = 1
+  export_path = os.path.join(MODEL_DIR, str(version))
+  print('export_path = {}\n'.format(export_path))
+
+  tf.keras.models.save_model(
+      model,
+      export_path,
+      overwrite=True,
+      include_optimizer=True,
+      save_format=None,
+      signatures=None,
+      options=None
+  )
+
+  print('\nSaved model:')
+  #!ls -l {export_path}
+  sh(f'ls -l {export_path}')
