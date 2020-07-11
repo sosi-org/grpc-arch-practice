@@ -17,6 +17,7 @@ print('TensorFlow version: {}'.format(tf.__version__))
 # TensorFlow version: 2.2.0
 # ----- tf version settled -----------------
 
+
 def load_dataset():
     print('Loading fashion-mnist dataset')
 
@@ -38,7 +39,7 @@ def load_dataset():
     print('\ntrain_images.shape: {}, of {}'.format(train_images.shape, train_images.dtype))
     print('test_images.shape: {}, of {}'.format(test_images.shape, test_images.dtype))
 
-    return train_images, train_labels, test_images, test_labels, class_names,
+    return train_images, train_labels, test_images, test_labels, class_names
 
 # Train and evaluate the model
 def train_eval(train_images, train_labels, test_images, test_labels):
@@ -87,4 +88,9 @@ def save_model(model):
 
     print('\nSaved model:')
     #!ls -l {export_path}
-    sh(f'ls -l {export_path}')
+    os.system(f'ls -l {export_path}')
+
+
+train_images, train_labels, test_images, test_labels, class_names = load_dataset()
+model = train_eval(train_images, train_labels, test_images, test_labels)
+save_model(model)
