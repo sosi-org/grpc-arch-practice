@@ -21,8 +21,9 @@ set -ex
 #     --volume=$MODEL_DIR:/MODEL_DIR \
 docker run --rm -p 8501:8501 \
     --volume=$MODEL_DIR:/MODEL_DIR \
+    --volume=$(pwd):/tfserve1 \
     -e MODEL_DIR=/MODEL_DIR \
     -t \
     ubuntu:latest \
-    echo 'hi'
+    sh /tfserve1/serve-process.sh
 

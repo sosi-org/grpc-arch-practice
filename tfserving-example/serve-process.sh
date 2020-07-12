@@ -1,4 +1,8 @@
 # tensorflow-model-server
+set -ex
+
+apt install curl
+curl --version
 
 echo "SERVER PROCESS:"
 # This is the same as you would do from your command line, but without the [arch=amd64], and no sudo
