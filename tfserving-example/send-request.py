@@ -43,3 +43,9 @@ print('rq')
 rq(test_images, test_labels, class_names)
 print('sss')
 sss(test_images, test_labels, class_names)
+
+
+"""
+tail ./runtime/server.log
+
+"""
