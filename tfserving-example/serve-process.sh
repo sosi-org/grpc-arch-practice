@@ -1,7 +1,9 @@
 # tensorflow-model-server
 set -ex
 
-apt install curl
+apt update -y
+
+apt-get install curl -y
 curl --version
 
 echo "SERVER PROCESS:"
@@ -12,10 +14,10 @@ echo "SERVER PROCESS:"
 
 echo "deb http://storage.googleapis.com/tensorflow-serving-apt stable tensorflow-model-server tensorflow-model-server-universal" | tee /etc/apt/sources.list.d/tensorflow-serving.list && \
 curl https://storage.googleapis.com/tensorflow-serving-apt/tensorflow-serving.release.pub.gpg | apt-key add -
-apt update
+# apt update
 
 # install the tf serving
-apt-get install tensorflow-model-server
+apt-get install -y tensorflow-model-server
 
 # os.environ["MODEL_DIR"] = MODEL_DIR
 # export MODEL_DIR=/var/folders/5g/kz1p_241503bfrqndt8qy7640000gn/T/1

@@ -23,7 +23,7 @@ docker run --rm -p 8501:8501 \
     --volume=$MODEL_DIR:/MODEL_DIR \
     --volume=$(pwd):/tfserve1 \
     -e MODEL_DIR=/MODEL_DIR \
-    -t \
+    -it \
     ubuntu:latest \
     sh /tfserve1/serve-process.sh
 
