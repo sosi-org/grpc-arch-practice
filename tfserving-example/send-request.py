@@ -4,6 +4,8 @@ import matplotlib.pyplot as plt
 
 import random
 
+from load_dataset import load_dataset
+
 def show(idx, title, test_images):
   plt.figure()
   plt.imshow(test_images[idx].reshape(28,28))
@@ -29,7 +31,15 @@ def rq(test_images, test_labels, class_names):
   json_response = requests.post('http://localhost:8501/v1/models/fashion_model:predict', data=data, headers=headers)
   predictions = json.loads(json_response.text)['predictions']
 
+  print(predictions)
   tx = 'The model thought this was a {} (class {}), and it was actually a {} (class {})'.format(
     class_names[np.argmax(predictions[0])], np.argmax(predictions[0]), class_names[test_labels[0]], test_labels[0])
 
   show(0, tx, test_images)
+
+train_images, train_labels, test_images, test_labels, class_names = load_dataset()
+
+print('rq')
+rq(test_images, test_labels, class_names)
+print('sss')
+sss(test_images, test_labels, class_names)

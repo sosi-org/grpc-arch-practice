@@ -30,6 +30,8 @@ echo "MODEL_DIR: $MODEL_DIR"
 
 mkdir -p /tfserve1/runtime
 
+echo "starting to serve: http://localhost:8501"
+
 # %%bash --bg
 #nohup
 tensorflow_model_server \
