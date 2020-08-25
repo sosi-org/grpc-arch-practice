@@ -4,7 +4,7 @@ import torch
 import torchvision
 import torchvision.transforms as transforms
 
-SAVE_PATH = './my-cifar_net.pth'
+MODEL_PATH = './my-beecomb-model.pth'
 
 
 def imshow(img):
