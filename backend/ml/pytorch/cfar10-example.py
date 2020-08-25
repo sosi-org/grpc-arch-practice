@@ -8,6 +8,8 @@ SAVE_PATH = './my-cifar_net.pth'
 
 
 def imshow(img):
+    import matplotlib.pyplot as plt
+    import numpy as np
     img = img / 2 + 0.5     # unnormalize
     npimg = img.numpy()
     plt.imshow(np.transpose(npimg, (1, 2, 0)))
@@ -34,8 +36,6 @@ def install_cfar10():
     classes = ('plane', 'car', 'bird', 'cat',
                'deer', 'dog', 'frog', 'horse', 'ship', 'truck')
 
-    import matplotlib.pyplot as plt
-    import numpy as np
 
     # functions to show an image
 
