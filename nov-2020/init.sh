@@ -15,6 +15,8 @@ source $VENV/bin/activate
 
 if false; then
 
+  cd ~/cs/ml--nn/grpc-arch-practice/nov-2020
+
   ln -s ~/cs/ml--nn/grpc-arch-practice/tf-serving-18-sept-2020/dl/tmp/resnet /tmp
 
   ls /tmp/resnet/resnet_client.py
