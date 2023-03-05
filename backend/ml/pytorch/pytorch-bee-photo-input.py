@@ -510,6 +510,9 @@ def process_files(image_file_list, labels_a):
     interesting: Can run run videos too: read_video()
     Also can write `write_png()`, good for highlighting.
     """
+
+    train_mode = False
+
     pt_img_a = []
     # todo: create a batch first, dont call for each input individually (done)
     for full_filename in image_file_list:
@@ -521,7 +524,11 @@ def process_files(image_file_list, labels_a):
 
     # todo: many more repeats, but not geenratng all at the same time in memory
     # also, read them async/delayed/yielded/re-chunk (re-vectorise)
-    mult_factor_count = 50*50
+
+    if train_mode:
+        mult_factor_count = 50*50
+    else:
+        mult_factor_count = 40
 
     # Nr labels = len(labels_a)
     # labels_a = [0, 1]
@@ -558,12 +565,10 @@ def process_files(image_file_list, labels_a):
         # Ntr = mult_factor_count
         labels_batch1 = label_batch(mult_factor_count * Ns, 1)
 
-    visualise = False
+    visualise = not (not train_mode)
     if visualise:
         show_torch_imagebatch(pt_img_batch)
     # todo: (maybe): send this out so that the next ones are done after this
-
-    train_mode = False
 
     # todo: give `mini_train()` a generator, not array
     if train_mode:
