@@ -95,8 +95,18 @@ def train_data_generator(dataset_pairs):
             # data_pair is a list of [inputs_image_batch, labels]
             inputs_image_batch, labels = data_pair
 
-            assert len(inputs_image_batch) == len(
-                labels), 'Number of abels should match number of images in a batch'
+            print(type(inputs_image_batch))
+            print(type(labels))
+            assert type(labels) == torch.Tensor, type(labels)
+            assert type(inputs_image_batch) == torch.Tensor, type(
+                inputs_image_batch)
+
+            print(len(inputs_image_batch))
+            print(len(labels))
+            print((labels))
+            # assert len(inputs_image_batch) == len(labels), \
+            #    'Number of labels should match number of images in a batch'
+
             for ii in range(len(inputs_image_batch)):
                 print(f'   batch item {ii}', inputs_image_batch[ii].shape)
                 # (3,95,95)
@@ -134,6 +144,8 @@ def mini_tain(dataset_pairs):
 
     # coroutine
     genr = train_data_generator(dataset_pairs)
+    # rename: genr -> training_data_stream
+    # training_data_stream: ( (image,label) -> STREAM -> loss)
     try:
         # no "loss" before first instance of training
         # can't send non-None value to a just-started generator
@@ -386,10 +398,24 @@ def process_files(image_file_list):
 
         print(pt_img_batch.shape)  # torch.Size([3, 95, 95]) not a batch
         # exit()
+
+        def listint_to_tensor(list_of_int):
+            import numpy
+            labels_np = a = numpy.array(list_of_int, dtype=int)
+            # labels = torch.stack([torch.Tensor(labels_np).int()]) # Expected input batch_size (10) to match target batch_size (1).
+            # labels = torch.stack([torch.Tensor(labels_np).int()]).T # 0D or 1D target tensor expected, multi-target not supported
+            # labels = torch.Tensor(labels_np).int() # Expectged Long
+            labels = torch.Tensor(labels_np).long()  # Expectged Long
+            return labels
+           # listint_to_tensor([1,2,3])
+           # input_tensor = torch.tensor([[1.0, 2.0, 3.0], [0.5, 2.5, 1.0], [0.8, 1.2, 3.0]])
+           # target_tensor = torch.tensor([2, 1, 0])
+
+        # exit()
         if train_mode:
             mini_tain([
                 # pair 1
-                (pt_img_batch, list(range(10)))
+                (pt_img_batch, listint_to_tensor(list(range(10))))
             ])
         else:
             load_and_classify(pt_img_batch)
@@ -445,4 +471,7 @@ References:
 [5] how to append multiple images in a batch pytorch    https://stackoverflow.com/a/68102266/4374258
 
 [6] Coroutines https://book.pythontips.com/en/latest/coroutines.html
+
+[7] Useful: image.resize((imageSize, imageSize), Image.ANTIALIAS)
+
 """
