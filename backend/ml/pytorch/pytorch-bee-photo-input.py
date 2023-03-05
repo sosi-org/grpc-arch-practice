@@ -132,7 +132,7 @@ def train_data_generator(dataset_pairs):
     # return('oh') don't return. It causes `StopIteration(value)` (if used by next())
 
 
-def mini_tain(dataset_pairs):
+def mini_train(dataset_pairs):
     # list of tuples (pairs), each is a bach and a label_batch
     # todo: generator
     # array of batches (batches paired with labels)
@@ -269,7 +269,7 @@ def load_image_file(full_file_path):
     return img
 
 
-def post_process(ptimg, mult_factor=10):
+def post_process(ptimg, mult_factor):
     """ Closely related to (fed by) load_image_file()
 
     # rename: post_process_and_multipy
@@ -301,7 +301,7 @@ def post_process(ptimg, mult_factor=10):
         Note that we need to unsqueeze the image tensor along the first dimension (using image.unsqueeze(0)) in order to add an additional batch dimension to the tensor. This is because PyTorch's convolutional layers expect input tensors with four dimensions: a batch dimension (which specifies the number of input images in the batch), a channel dimension (which specifies the number of input channels), and two spatial dimensions (which specify the height and width of the input images). By unsqueezing the image tensor along the first dimension, we add a batch dimension with a size of 1, so that the input tensor has the required four dimensions.
         """
         # train
-        # mini_tain([[pt_img1.unsqueeze(0), 1]])
+        # mini_train([[pt_img1.unsqueeze(0), 1]])
 
         # #load_and_classify(pt_img1)
         # #load_and_classify(image_file_list)
@@ -388,7 +388,9 @@ def process_files(image_file_list):
 
         print('d1', pt_img.shape)
 
-        pt_img_batch = post_process(pt_img)
+        mult_factor_count = 100
+
+        pt_img_batch = post_process(pt_img, mult_factor_count)
         print('**d2', pt_img_batch.shape)
         print('**d2l', len(pt_img_batch.shape))
         assert len(pt_img_batch.shape) == 4
@@ -417,9 +419,9 @@ def process_files(image_file_list):
 
         # exit()
         if train_mode:
-            mini_tain([
+            mini_train([
                 # pair 1
-                (pt_img_batch, label_batch(10, 1))
+                (pt_img_batch, label_batch(mult_factor_count, 1))
             ])
         else:
             load_and_classify(pt_img_batch)
