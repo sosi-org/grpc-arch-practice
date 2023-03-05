@@ -70,12 +70,49 @@ def process_loaded_images(image_list):
     pass
 
 
+def load_file(full_file_path):
+    """
+    See https://www.tutorialspoint.com/how-to-read-a-jpeg-or-png-image-in-pytorch
+    """
+    # import torchvision
+    from torchvision.io import read_image
+    import torchvision.transforms as T
+
+    img = read_image(full_file_path)
+    img = T.ToPILImage()(img)
+    img.show()
+
+
 def process_files(image_file_list):
     """
+    API service will call this
+
     The file_interface
     interface: one or a list of filenames
     """
-    load_and_classify(image_file_list)
+    for full_filename in image_file_list:
+        pt_img = load_file([full_filename])
+        # load_and_classify(image_file_list)
+        load_and_classify([pt_img])
+
+
+def demo_fixed_files():
+    apisave_base = '../../../../..'
+    # todo: move sosi-practice-files to a test folder
+    images_path = apisave_base + '/' + 'sosi-practice-files'
+    fn_list = [
+        'photo-sosi-2023-01-21-T-21-12-53.763.jpg',
+        'photo-sosi-2023-01-21-T-21-41-05.593.jpg',
+    ]
+    #
+    image_file_list = fn_list.map(lambda fn: images_path + '/' + fn)
+    process_files(image_file_list)
+
+    # for i in range(len(fn_list)):
+    #    fn = fn_list[i]
+    #    filename = images_path + '/' + fn
+    #
+    #    load_file(filename)
 
 
 def demo():
@@ -84,7 +121,10 @@ def demo():
 
 
 if __name__ == '__main__':
-    demo()
+    # demo()
+
+    demo_fixed_files()
+
 
 """
 References:
