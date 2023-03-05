@@ -1,3 +1,4 @@
+import torch.nn as nn
 
 MODEL_PATH = './my-cifar_net.pth'
 
@@ -91,7 +92,7 @@ def process_files(image_file_list):
     interface: one or a list of filenames
     """
     for full_filename in image_file_list:
-        pt_img = load_file([full_filename])
+        pt_img = load_file(full_filename)
         # load_and_classify(image_file_list)
         load_and_classify([pt_img])
 
@@ -105,7 +106,9 @@ def demo_fixed_files():
         'photo-sosi-2023-01-21-T-21-41-05.593.jpg',
     ]
     #
-    image_file_list = fn_list.map(lambda fn: images_path + '/' + fn)
+    image_file_list = map(
+        lambda fn: images_path + '/' + fn,
+        fn_list)
     process_files(image_file_list)
 
     # for i in range(len(fn_list)):
