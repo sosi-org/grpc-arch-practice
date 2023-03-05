@@ -6,7 +6,7 @@ import torch.nn.functional as F
 import torch.nn as nn
 #
 
-MODEL_PATH = './my-cifar_net.pth'
+MODEL_PATH = './my-beecomb-model.pth'
 
 
 # move near load_image_file()
@@ -24,11 +24,42 @@ def show_torch_image(images):
     imshow(img_rgb)
 
 
+# networks configuration
+inp1_nch = 3  # inp_nchannels
+out1_nch = 6
+kern1_sz = 5
+# previous size: torch.Size([4, 3, 32, 32])
+# Conv2d:
+#   torch.nn.Conv2d
+#   .args: (in_channels, out_channels, kernel_size, stride=1)
+#
+# MaxPool2d:
+#    torch.nn.MaxPool2d
+#    .args: (kernel_size, stride)
+#    Example: MaxPool2d(2, 2) -> (2x2) stride=(2,2)
+#
+#  32x32 --->  (32-5+1)x(32-5-1) = 28x28
+#  conv1 --> 28x28 --> 14,14 but -2+1 -->13
+#  28x28 ---> (28-2+1)^2 but (/2)^2 -> 13x13 ??
+
+# second conv:
+#    6dim input, 16dim output?! cool.
+#    5x5 ==>
+#      13x13 -->... -> (13-5+1)^2 = 9x9
+#    9x9 x (16 channels)
+#  But why is it 5?
+# .... (?)
+# flatten 16 * 5 * 5 --> 400
+# linear: (400x120)
+
 # rename to `model`?
+
+
 class Net(nn.Module):
+
     def __init__(self):
         super().__init__()
-        self.conv1 = nn.Conv2d(3, 6, 5)
+        self.conv1 = nn.Conv2d(inp1_nch, out1_nch, kern1_sz)
         self.pool = nn.MaxPool2d(2, 2)
         self.conv2 = nn.Conv2d(6, 16, 5)
         self.fc1 = nn.Linear(16 * 5 * 5, 120)
@@ -36,12 +67,15 @@ class Net(nn.Module):
         self.fc3 = nn.Linear(84, 10)
 
     def forward(self, x):
-        print('fwd1')
+        print('fwd1', x.shape)  # torch.Size([1, 3, 719, 1280])
         x = self.pool(F.relu(self.conv1(x)))
-        print('fwd2')
+        print('fwd2', x.shape)  # torch.Size([1, 6, 357, 638])
         x = self.pool(F.relu(self.conv2(x)))
+        print('fwd3', x.shape)  # torch.Size([1, 16, 176, 317])
         x = torch.flatten(x, 1)  # flatten all dimensions except batch
+        print('fwd4', x.shape)  # torch.Size([1, 892672])
         # mat1 and mat2 shapes cannot be multiplied (1x892672 and 400x120)
+        # 400x120 = mult(16 * 5 * 5, 120)
         x = F.relu(self.fc1(x))
         x = F.relu(self.fc2(x))
         x = self.fc3(x)
@@ -222,6 +256,10 @@ def process_files(image_file_list):
         # load_and_classify([uns])
         load_and_classify(uns)
         return
+
+        # RandomResizedCrop(size[, scale, ratio, ...]) #Crop a random portion of image and resize it to a given size.
+        # RandomPerspective([distortion_scale, p, ...]) # Performs a random perspective transformation of the given image with a given probability.
+        # RandomCrop(size[, padding, pad_if_needed, ...])  # Crop the given image at a random location.
 
         # Also this will work:
         import torchvision.transforms as T
