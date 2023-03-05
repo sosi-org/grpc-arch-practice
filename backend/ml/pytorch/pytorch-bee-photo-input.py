@@ -97,8 +97,8 @@ def train_data_generator(dataset_pairs):
             assert len(inputs_image_batch) == len(
                 labels), 'Number of abels should match number of images in a batch'
             for ii in range(len(inputs_image_batch)):
-                # print(f'   batch item {i}',inputs_image_batch[ii].shape)  # (3,95,95)
-                pass
+                print(f'   batch item {ii}', inputs_image_batch[ii].shape)
+                # (3,95,95)
 
             # the yield
             #################
@@ -133,22 +133,15 @@ def mini_tain(dataset_pairs):
 
     # coroutine
     genr = train_data_generator(dataset_pairs)
-
-    # can't send non-None value to a just-started generator
-    # last_loss, last_loss_to_send, send_object
-    send_object = None
-    """
-    for batch_index, inputs_image_batch, labels in genr:
-    """
     try:
+        # can't send non-None value to a just-started generator
+        # last_loss, last_loss_to_send, send_object
+        send_object = None
         while (True):
             batch_index, inputs_image_batch, labels = \
                 genr.send(send_object)
-            # next(genr)
+            # next(genr), genr.send(), See [6]
 
-            #
-            print('from generator:', batch_index)
-            # exit()
             # zero the parameter gradients
             optimizer.zero_grad()
 
@@ -159,14 +152,6 @@ def mini_tain(dataset_pairs):
             optimizer.step()
 
             send_object = loss.item()
-
-            # import random
-            # lss = random.randint(1,10)
-            # print('sending', lss)
-            # genr.send(lss)
-            # See [6]
-
-            last_loss_to_send = lss
     except StopIteration as ss:
         print('closingg', ss)
         oo = genr.close()
