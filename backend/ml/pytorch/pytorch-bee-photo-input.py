@@ -83,6 +83,8 @@ class Net(nn.Module):
 
 
 def mini_tain(dataset_imagearray):
+    # list of tuples (pairs), each is a bach and a label_batch
+    # todo: generator
     # rename: dataset_imagearray --> image_batch? no. array of batches
     net = Net()
     import torch.optim as optim
@@ -94,11 +96,17 @@ def mini_tain(dataset_imagearray):
     for epoch in range(2):  # loop over the dataset multiple times
         running_loss = 0.0
 
+        # enumerate(values, start=1)
         for i, data in enumerate(dataset_imagearray, 0):
 
-            print(i, 'data:', data)
+            # print(i, 'data:', len(data), type(data), data.shape)
             # get the inputs; data is a list of [inputs, labels]
             inputs, labels = data
+            assert len(inputs) == len(
+                labels), 'Number of abels should match number of images in a batch'
+            for i in range(len(inputs)):
+                print(inputs[i].shape)  # (3,95,95)
+            exit()
 
             # rename: inputs -> input_batch
 
@@ -175,10 +183,10 @@ def process_loaded_images(image_list):
     pass
 
 
-def standard_loader():
+def standard_loader(folder_path):
     # see https://stackoverflow.com/questions/58941007/how-do-i-load-multiple-grayscale-images-as-a-single-tensor-in-pytorch
     ds = torchvision.datasets.ImageFolder(
-        r'C:\Users\dj\data\cifar10\test', transform=transforms.ToTensor())
+        folder_path, transform=transforms.ToTensor())
     dl = DataLoader(ds, batch_size=3)
     print(len(dl))
 
@@ -348,7 +356,7 @@ def process_files(image_file_list):
         print(pt_img_batch.shape)  # torch.Size([3, 95, 95]) not a batch
         # exit()
         if train_mode:
-            mini_tain([pt_img_batch, 1])
+            mini_tain([(pt_img_batch, list(range(10)))])
         else:
             load_and_classify(pt_img_batch)
 
