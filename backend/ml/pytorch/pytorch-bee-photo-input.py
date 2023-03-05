@@ -82,6 +82,43 @@ class Net(nn.Module):
         return x
 
 
+def train_data_generator(dataset_pairs):
+
+    # train:
+    for epoch in range(2):  # loop over the dataset multiple times
+        running_loss = 0.0
+
+        # enumerate(values, start=1)
+        for i, data_pair in enumerate(dataset_pairs, 0):
+            # get the inputs_image_batch
+            # data_pair is a list of [inputs_image_batch, labels]
+            inputs_image_batch, labels = data_pair
+
+            assert len(inputs_image_batch) == len(
+                labels), 'Number of abels should match number of images in a batch'
+            for ii in range(len(inputs_image_batch)):
+                #print(f'   batch item {i}',inputs_image_batch[ii].shape)  # (3,95,95)
+                pass
+
+            # the yield
+            #################
+            single_loss = (yield i, inputs_image_batch, labels)
+            print('   generator:receive:', single_loss)
+            #################
+
+
+            # print statistics
+            #running_loss += single_loss
+            if i % 2000 == 1999:    # print every 2000 mini-batches
+                print(f'[{epoch + 1}, {i + 1:5d}] loss: {running_loss / 2000:.3f}')
+                running_loss = 0.0
+            if i > 4000:
+                break
+        print('.')
+    print(':')
+    print('Finished Training')
+    # return('oh') don't return. It causes `StopIteration(value)` (if used by next())
+
 def mini_tain(dataset_pairs):
     # list of tuples (pairs), each is a bach and a label_batch
     # todo: generator
@@ -94,22 +131,25 @@ def mini_tain(dataset_pairs):
     criterion = nn.CrossEntropyLoss()
     optimizer = optim.SGD(net.parameters(), lr=0.001, momentum=0.9)
 
-    # train:
-    for epoch in range(2):  # loop over the dataset multiple times
-        running_loss = 0.0
+    # coroutine
+    genr = train_data_generator(dataset_pairs)
 
-        # enumerate(values, start=1)
-        for i, data_pair in enumerate(dataset_pairs, 0):
+    # can't send non-None value to a just-started generator
+    # last_loss, last_loss_to_send, send_object
+    send_object = None
+    """
+    for batch_index, inputs_image_batch, labels in genr:
+    """
+    try:
+        while(True):
+            batch_index, inputs_image_batch, labels = \
+              genr.send(send_object)
+              #next(genr)
 
-            # get the inputs_image_batch
-            # data_pair is a list of [inputs_image_batch, labels]
-            inputs_image_batch, labels = data_pair
-            assert len(inputs_image_batch) == len(
-                labels), 'Number of abels should match number of images in a batch'
-            for i in range(len(inputs_image_batch)):
-                print(inputs_image_batch[i].shape)  # (3,95,95)
-            exit()
 
+            #
+            print('from generator:', batch_index)
+            #exit()
             # zero the parameter gradients
             optimizer.zero_grad()
 
@@ -119,17 +159,20 @@ def mini_tain(dataset_pairs):
             loss.backward()
             optimizer.step()
 
-            # print statistics
-            running_loss += loss.item()
-            if i % 2000 == 1999:    # print every 2000 mini-batches
-                print(f'[{epoch + 1}, {i + 1:5d}] loss: {running_loss / 2000:.3f}')
-                running_loss = 0.0
-            if i > 4000:
-                break
-        print('.')
-    print(':')
+            send_object = loss.item()
 
-    print('Finished Training')
+            #import random
+            #lss = random.randint(1,10)
+            # print('sending', lss)
+            #genr.send(lss)
+            # See [6]
+
+            last_loss_to_send = lss
+    except StopIteration as ss:
+      print('closingg', ss)
+      oo = genr.close()
+      print('oooo', oo)
+
 
     # torch.save(net.state_dict(), SAVE_PATH)
     # print('Saved state')
@@ -413,4 +456,5 @@ References:
 
 [5] how to append multiple images in a batch pytorch    https://stackoverflow.com/a/68102266/4374258
 
+[6] Coroutines https://book.pythontips.com/en/latest/coroutines.html
 """
