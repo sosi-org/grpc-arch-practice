@@ -444,7 +444,7 @@ def post_process(ptimg_a, labels_a, mult_factor):
     return multiplied_batch, labels_batch
 
 
-def process_files(image_file_list):
+def process_files(image_file_list, labels_a):
     """
     API service will call this
 
@@ -456,18 +456,18 @@ def process_files(image_file_list):
     Also can write `write_png()`, good for highlighting.
     """
     pt_img_a = []
-    # todo: no, create a batch first, dont call for each input individually
+    # todo: create a batch first, dont call for each input individually (done)
     for full_filename in image_file_list:
         pt_img = load_image_file(full_filename)
-        # todo: pre load all imates befor  this, and then retrain
+        # todo: pre-load all imates befor  this, and then retrain (done)
 
         print('d1', pt_img.shape)
         pt_img_a += [pt_img]
 
     mult_factor_count = 100
 
-    # Nr labels
-    labels_a = [0, 1]
+    # Nr labels = len(labels_a)
+    # labels_a = [0, 1]
 
     pt_img_batch, labels_batch2 = post_process(
         pt_img_a, labels_a, mult_factor_count)
@@ -526,11 +526,14 @@ def demo_fixed_files():
         'photo-sosi-2023-01-21-T-21-12-53.763.jpg',
         'photo-sosi-2023-01-21-T-21-41-05.593.jpg',
     ]
+    labels_a = [0, 1]
+
     #
     image_file_list = map(
         lambda fn: images_path + '/' + fn,
         fn_list)
-    process_files(image_file_list)
+
+    process_files(image_file_list, labels_a)
 
     # for i in range(len(fn_list)):
     #    fn = fn_list[i]
