@@ -1,6 +1,11 @@
+
+# shortcuts:
+import torch.nn.functional as F
 import torch.nn as nn
+#
 
 MODEL_PATH = './my-cifar_net.pth'
+
 
 def imshow(img):
     import matplotlib.pyplot as plt
@@ -14,9 +19,6 @@ def imshow(img):
 def show_torch_image(images):
     img_rgb = torchvision.utils.make_grid(images)
     imshow(img_rgb)
-
-# shortcuts:
-import torch.nn.functional as F
 
 
 class Net(nn.Module):
@@ -54,7 +56,7 @@ def load_and_classify(images):
 
     # pre training: zill training:
     if (False):
-      net.load_state_dict(torch.load(MODEL_PATH))
+        net.load_state_dict(torch.load(MODEL_PATH))
 
     classes = load_classes()
 
@@ -100,11 +102,14 @@ def load_file(full_file_path):
 
     return img
 
+
 def post_process(ptimg):
-    import pdb; pdb.set_trace()
+    import pdb
+    pdb.set_trace()
 
     # based on torch.nn.Conv2d .args: (in_channels, out_channels, kernel_size, stride=1)
     return ptimg[:]
+
 
 def process_files(image_file_list):
     """
