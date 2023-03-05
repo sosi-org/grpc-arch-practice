@@ -259,6 +259,8 @@ def post_process(ptimg):
         T.PILToTensor(),
         T.ConvertImageDtype(torch.float),
         # T.RandomHorizontalFlip(0.5)
+        # T.RandomResizedCrop( (32,32) ), # error:  (16x25 and 400x120)
+        T.RandomResizedCrop((95, 95)),  # error:  (16x25 and 400x120)
     ])
     t2 = t(ptimg)
     print("4", t2.shape)  # torch.Size([3, 719, 1280])
