@@ -1,6 +1,7 @@
 
 MODEL_PATH = './my-cifar_net.pth'
 
+
 def imshow(img):
     import matplotlib.pyplot as plt
     import numpy as np
@@ -9,9 +10,11 @@ def imshow(img):
     plt.imshow(np.transpose(npimg, (1, 2, 0)))
     plt.show()
 
+
 def show_torch_image(images):
-  img_rgb = torchvision.utils.make_grid(images)
-  imshow(img_rgb)
+    img_rgb = torchvision.utils.make_grid(images)
+    imshow(img_rgb)
+
 
 class Net(nn.Module):
     def __init__(self):
@@ -32,11 +35,13 @@ class Net(nn.Module):
         x = self.fc3(x)
         return x
 
+
 def load_classes():
     classes = ('plane', 'car', 'bird', 'cat',
                'deer', 'dog', 'frog', 'horse', 'ship', 'truck')
     # classes = load_dict(...)
     return classes
+
 
 def load_and_classify(images):
 
@@ -44,7 +49,7 @@ def load_and_classify(images):
     net.load_state_dict(torch.load(MODEL_PATH))
     classes = load_classes()
 
-    num_images = len(images) # note tested
+    num_images = len(images)  # note tested
     outputs = net(images)
 
     # ?
@@ -61,21 +66,24 @@ def load_and_classify(images):
 
 
 def process_loaded_images(image_list):
-  #todo: image_list is a list of loaded images in format of ...
-  pass
+    # todo: image_list is a list of loaded images in format of ...
+    pass
 
-#file_interface
+# file_interface
 # interface: one or a list of filenames
+
+
 def process_files(image_file_list):
-  load_and_classify(image_file_list)
+    load_and_classify(image_file_list)
 
 
 def demo():
-  images = []
-  load_and_classify(images)
+    images = []
+    load_and_classify(images)
+
 
 if __name__ == '__main__':
-  demo()
+    demo()
 
 """
 References:
