@@ -190,6 +190,7 @@ def process_files(image_file_list):
     interesting: Can run run videos too: read_video()
     Also can write `write_png()`, good for highlighting.
     """
+    # todo: no, create a batch first, dont call for each input individually
     for full_filename in image_file_list:
         pt_img = load_image_file(full_filename)
 
@@ -217,7 +218,25 @@ def process_files(image_file_list):
         uns = torch.unsqueeze(ti, 0)
         # (1, C x H x W)
         print("3", uns.shape)  # torch.Size([1, 3, 719, 1280])
-        load_and_classify([uns])
+        #load_and_classify([uns])
+        load_and_classify(uns)
+        return
+
+        # Also this will work:
+        import torchvision.transforms as T
+
+        # See [4]
+        # def get_transform(train):
+        t = T.Compose([
+            T.PILToTensor(),
+            T.ConvertImageDtype(torch.float),
+            # T.RandomHorizontalFlip(0.5)
+        ])
+        t2  =t (pt_img1)
+        print("4", t2.shape)  # torch.Size([3, 719, 1280])
+
+        #return t2
+        #load_and_classify(t2)
 
 
 def demo_fixed_files():
@@ -259,4 +278,7 @@ References:
 [2] read_image() https://pytorch.org/vision/main/generated/torchvision.io.read_image.html#torchvision.io.read_image
 
 [3] Nice: torch.jit.script: https://pytorch.org/vision/main/auto_examples/plot_scripted_tensor_transforms.html#sphx-glr-auto-examples-plot-scripted-tensor-transforms-py
+
+[4] https://pytorch.org/tutorials/intermediate/torchvision_tutorial.html
+
 """
