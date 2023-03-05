@@ -135,11 +135,12 @@ def mini_tain(dataset_pairs):
     genr = train_data_generator(dataset_pairs)
     try:
         # can't send non-None value to a just-started generator
-        # last_loss, last_loss_to_send, send_object
-        send_object = None
+        # last_loss, last_loss_to_send, send_object, _coroutine_send_object
+        _coroutine_send_object = None
         while (True):
+
             batch_index, inputs_image_batch, labels = \
-                genr.send(send_object)
+                genr.send(_coroutine_send_object)
             # next(genr), genr.send(), See [6]
 
             # zero the parameter gradients
@@ -150,8 +151,9 @@ def mini_tain(dataset_pairs):
             loss = criterion(outputs, labels)
             loss.backward()
             optimizer.step()
+            loss1 = loss.item()
 
-            send_object = loss.item()
+            _coroutine_send_object = loss1
     except StopIteration as ss:
         print('closingg', ss)
         oo = genr.close()
