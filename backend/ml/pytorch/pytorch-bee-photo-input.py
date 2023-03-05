@@ -229,33 +229,33 @@ def process_files(image_file_list):
     for full_filename in image_file_list:
         pt_img = load_image_file(full_filename)
 
-        pt_img1 = post_process(pt_img)
+        if False:
+            pt_img1 = post_process(pt_img)
+            """
+          `.unsqueeze(0)`:
+          GPT:
+          Note that we need to unsqueeze the image tensor along the first dimension (using image.unsqueeze(0)) in order to add an additional batch dimension to the tensor. This is because PyTorch's convolutional layers expect input tensors with four dimensions: a batch dimension (which specifies the number of input images in the batch), a channel dimension (which specifies the number of input channels), and two spatial dimensions (which specify the height and width of the input images). By unsqueezing the image tensor along the first dimension, we add a batch dimension with a size of 1, so that the input tensor has the required four dimensions.
+          """
+            # train
+            # mini_tain([[pt_img1.unsqueeze(0), 1]])
 
-        """
-        `.unsqueeze(0)`:
-        GPT:
-        Note that we need to unsqueeze the image tensor along the first dimension (using image.unsqueeze(0)) in order to add an additional batch dimension to the tensor. This is because PyTorch's convolutional layers expect input tensors with four dimensions: a batch dimension (which specifies the number of input images in the batch), a channel dimension (which specifies the number of input channels), and two spatial dimensions (which specify the height and width of the input images). By unsqueezing the image tensor along the first dimension, we add a batch dimension with a size of 1, so that the input tensor has the required four dimensions.
-        """
-        # train
-        # mini_tain([[pt_img1.unsqueeze(0), 1]])
+            # #load_and_classify(pt_img1)
+            # #load_and_classify(image_file_list)
+            # test
 
-        # #load_and_classify(pt_img1)
-        # #load_and_classify(image_file_list)
-        # test
+            # import pdb;pdb.set_trace()
 
-        # import pdb;pdb.set_trace()
-
-        # print("1", pt_img1.shape)
-        ti = torchvision.transforms.ToTensor()(pt_img1)
-        #  argument 'input' (position 1) must be Tensor, not Image
-        # (C x H x W)
-        print("2", ti.shape)  # torch.Size([3, 719, 1280])
-        uns = torch.unsqueeze(ti, 0)
-        # (1, C x H x W)
-        print("3", uns.shape)  # torch.Size([1, 3, 719, 1280])
-        # load_and_classify([uns])
-        load_and_classify(uns)
-        return
+            # print("1", pt_img1.shape)
+            ti = torchvision.transforms.ToTensor()(pt_img1)
+            #  argument 'input' (position 1) must be Tensor, not Image
+            # (C x H x W)
+            print("2", ti.shape)  # torch.Size([3, 719, 1280])
+            uns = torch.unsqueeze(ti, 0)
+            # (1, C x H x W)
+            print("3", uns.shape)  # torch.Size([1, 3, 719, 1280])
+            # load_and_classify([uns])
+            load_and_classify(uns)
+            return
 
         # RandomResizedCrop(size[, scale, ratio, ...]) #Crop a random portion of image and resize it to a given size.
         # RandomPerspective([distortion_scale, p, ...]) # Performs a random perspective transformation of the given image with a given probability.
@@ -271,11 +271,11 @@ def process_files(image_file_list):
             T.ConvertImageDtype(torch.float),
             # T.RandomHorizontalFlip(0.5)
         ])
-        t2 = t(pt_img1)
+        t2 = t(pt_img)
         print("4", t2.shape)  # torch.Size([3, 719, 1280])
 
         # return t2
-        # load_and_classify(t2)
+        load_and_classify(t2)
 
 
 def demo_fixed_files():
