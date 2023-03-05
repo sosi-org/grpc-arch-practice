@@ -1,5 +1,6 @@
 import torch
 import torchvision
+import numpy
 
 # shortcuts:
 import torch.nn.functional as F
@@ -108,13 +109,14 @@ def train_data_generator(dataset_pairs):
             #    'Number of labels should match number of images in a batch'
 
             for ii in range(len(inputs_image_batch)):
-                print(f'   batch item {ii}', inputs_image_batch[ii].shape)
+                # print(f'   batch item {ii}', inputs_image_batch[ii].shape)
                 # (3,95,95)
+                pass
 
             # the yield
             #################
             single_loss = (yield i, inputs_image_batch, labels)
-            print('   generator:receive:', single_loss)
+            print('   generator received: loss:', single_loss)
             #################
 
             # print statistics
@@ -400,8 +402,7 @@ def process_files(image_file_list):
         # exit()
 
         def listint_to_tensor(list_of_int):
-            import numpy
-            labels_np = a = numpy.array(list_of_int, dtype=int)
+            labels_np = numpy.array(list_of_int, dtype=int)
             # labels = torch.stack([torch.Tensor(labels_np).int()]) # Expected input batch_size (10) to match target batch_size (1).
             # labels = torch.stack([torch.Tensor(labels_np).int()]).T # 0D or 1D target tensor expected, multi-target not supported
             # labels = torch.Tensor(labels_np).int() # Expectged Long
@@ -411,11 +412,14 @@ def process_files(image_file_list):
            # input_tensor = torch.tensor([[1.0, 2.0, 3.0], [0.5, 2.5, 1.0], [0.8, 1.2, 3.0]])
            # target_tensor = torch.tensor([2, 1, 0])
 
+        def label_batch(count, value):
+            return torch.Tensor(numpy.full((count,), value, dtype=int)).long()
+
         # exit()
         if train_mode:
             mini_tain([
                 # pair 1
-                (pt_img_batch, listint_to_tensor(list(range(10))))
+                (pt_img_batch, label_batch(10, 1))
             ])
         else:
             load_and_classify(pt_img_batch)
