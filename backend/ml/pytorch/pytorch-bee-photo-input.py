@@ -2,7 +2,6 @@ import torch.nn as nn
 
 MODEL_PATH = './my-cifar_net.pth'
 
-
 def imshow(img):
     import matplotlib.pyplot as plt
     import numpy as np
@@ -15,6 +14,9 @@ def imshow(img):
 def show_torch_image(images):
     img_rgb = torchvision.utils.make_grid(images)
     imshow(img_rgb)
+
+# shortcuts:
+import torch.nn.functional as F
 
 
 class Net(nn.Module):
@@ -46,8 +48,14 @@ def load_classes():
 
 def load_and_classify(images):
 
+    import torch
+
     net = Net()
-    net.load_state_dict(torch.load(MODEL_PATH))
+
+    # pre training: zill training:
+    if (False):
+      net.load_state_dict(torch.load(MODEL_PATH))
+
     classes = load_classes()
 
     num_images = len(images)  # note tested
@@ -73,6 +81,7 @@ def process_loaded_images(image_list):
 
 def load_file(full_file_path):
     """
+    Low-level (doe snot post-process)
     See https://www.tutorialspoint.com/how-to-read-a-jpeg-or-png-image-in-pytorch
     """
     # import torchvision
@@ -87,10 +96,15 @@ def load_file(full_file_path):
     import torch
     print(
         f"Image of size {img.size}, type {type(img)}, is_tensor: { torch.is_tensor(img)} in path {full_file_path}")
-    exit()
+    # example output: (1280, 719)
 
     return img
 
+def post_process(ptimg):
+    import pdb; pdb.set_trace()
+
+    # based on torch.nn.Conv2d .args: (in_channels, out_channels, kernel_size, stride=1)
+    return ptimg[:]
 
 def process_files(image_file_list):
     """
@@ -101,8 +115,10 @@ def process_files(image_file_list):
     """
     for full_filename in image_file_list:
         pt_img = load_file(full_filename)
+
+        pt_img1 = post_process(pt_img)
         # load_and_classify(image_file_list)
-        load_and_classify([pt_img])
+        load_and_classify([pt_img1])
 
 
 def demo_fixed_files():
