@@ -22,6 +22,7 @@ def show_torch_image(images):
     imshow(img_rgb)
 
 
+# rename to `model`?
 class Net(nn.Module):
     def __init__(self):
         super().__init__()
@@ -33,13 +34,62 @@ class Net(nn.Module):
         self.fc3 = nn.Linear(84, 10)
 
     def forward(self, x):
+        print('fwd1')
         x = self.pool(F.relu(self.conv1(x)))
+        print('fwd2')
         x = self.pool(F.relu(self.conv2(x)))
         x = torch.flatten(x, 1)  # flatten all dimensions except batch
         x = F.relu(self.fc1(x))
         x = F.relu(self.fc2(x))
         x = self.fc3(x)
         return x
+
+
+def mini_tain(dataset_imagearray):
+    net = Net()
+    import torch.optim as optim
+
+    criterion = nn.CrossEntropyLoss()
+    optimizer = optim.SGD(net.parameters(), lr=0.001, momentum=0.9)
+
+    # train:
+    for epoch in range(2):  # loop over the dataset multiple times
+        running_loss = 0.0
+
+        for i, data in enumerate(dataset_imagearray, 0):
+
+            print(i, 'data:', data)
+            # get the inputs; data is a list of [inputs, labels]
+            inputs, labels = data
+
+            # zero the parameter gradients
+            optimizer.zero_grad()
+
+            # forward + backward + optimize
+            outputs = net(inputs)
+            loss = criterion(outputs, labels)
+            loss.backward()
+            optimizer.step()
+
+            # print statistics
+            running_loss += loss.item()
+            if i % 2000 == 1999:    # print every 2000 mini-batches
+                print(f'[{epoch + 1}, {i + 1:5d}] loss: {running_loss / 2000:.3f}')
+                running_loss = 0.0
+            if i > 4000:
+                break
+        print('.')
+    print(':')
+
+    print('Finished Training')
+
+    # torch.save(net.state_dict(), SAVE_PATH)
+    # print('Saved state')
+    print('bye')
+
+    exit()
+
+    pass
 
 
 def load_classes():
@@ -61,7 +111,7 @@ def load_and_classify(images):
 
     classes = load_classes()
 
-    num_images = len(images)  # note tested
+    # num_images = len(images)  # note tested
     outputs = net(images)
 
     # ?
@@ -105,12 +155,22 @@ def load_image_file(full_file_path):
 
 
 def post_process(ptimg):
-    """ Closely related to (fed by) load_image_file() """
-    import pdb
-    pdb.set_trace()
+    """ Closely related to (fed by) load_image_file()
+
+    Also see: (for future)
+    https://pytorch.org/vision/stable/transforms.html
+
+    inputs from raw loaded image file
+
+    """
+    # import pdb
+    # pdb.set_trace()
+
+    # no: ptimg[:5,:5]
+    # ptimg.crop()
 
     # based on torch.nn.Conv2d .args: (in_channels, out_channels, kernel_size, stride=1)
-    return ptimg[:]
+    return ptimg
 
 
 def process_files(image_file_list):
@@ -124,8 +184,14 @@ def process_files(image_file_list):
         pt_img = load_image_file(full_filename)
 
         pt_img1 = post_process(pt_img)
-        # load_and_classify(image_file_list)
-        load_and_classify([pt_img1])
+
+        # train
+        mini_tain([[pt_img1, 1]])
+
+        # #load_and_classify(pt_img1)
+        # #load_and_classify(image_file_list)
+        # test
+        # load_and_classify([pt_img1])
 
 
 def demo_fixed_files():
