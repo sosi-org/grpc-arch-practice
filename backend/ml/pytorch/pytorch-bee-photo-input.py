@@ -82,10 +82,12 @@ class Net(nn.Module):
         return x
 
 
-def mini_tain(dataset_imagearray):
+def mini_tain(dataset_pairs):
     # list of tuples (pairs), each is a bach and a label_batch
     # todo: generator
-    # rename: dataset_imagearray --> image_batch? no. array of batches
+    # array of batches (batches paired with labels)
+    # rename: inputs_image_batch -> input_batch
+
     net = Net()
     import torch.optim as optim
 
@@ -97,24 +99,22 @@ def mini_tain(dataset_imagearray):
         running_loss = 0.0
 
         # enumerate(values, start=1)
-        for i, data in enumerate(dataset_imagearray, 0):
+        for i, data_pair in enumerate(dataset_pairs, 0):
 
-            # print(i, 'data:', len(data), type(data), data.shape)
-            # get the inputs; data is a list of [inputs, labels]
-            inputs, labels = data
-            assert len(inputs) == len(
+            # get the inputs_image_batch
+            # data_pair is a list of [inputs_image_batch, labels]
+            inputs_image_batch, labels = data_pair
+            assert len(inputs_image_batch) == len(
                 labels), 'Number of abels should match number of images in a batch'
-            for i in range(len(inputs)):
-                print(inputs[i].shape)  # (3,95,95)
+            for i in range(len(inputs_image_batch)):
+                print(inputs_image_batch[i].shape)  # (3,95,95)
             exit()
-
-            # rename: inputs -> input_batch
 
             # zero the parameter gradients
             optimizer.zero_grad()
 
             # forward + backward + optimize
-            outputs = net(inputs)
+            outputs = net(inputs_image_batch)
             loss = criterion(outputs, labels)
             loss.backward()
             optimizer.step()
@@ -356,7 +356,10 @@ def process_files(image_file_list):
         print(pt_img_batch.shape)  # torch.Size([3, 95, 95]) not a batch
         # exit()
         if train_mode:
-            mini_tain([(pt_img_batch, list(range(10)))])
+            mini_tain([
+                # pair 1
+                (pt_img_batch, list(range(10)))
+            ])
         else:
             load_and_classify(pt_img_batch)
 
