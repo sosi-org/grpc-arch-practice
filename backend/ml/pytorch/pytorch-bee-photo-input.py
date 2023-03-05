@@ -97,7 +97,7 @@ def train_data_generator(dataset_pairs):
             assert len(inputs_image_batch) == len(
                 labels), 'Number of abels should match number of images in a batch'
             for ii in range(len(inputs_image_batch)):
-                #print(f'   batch item {i}',inputs_image_batch[ii].shape)  # (3,95,95)
+                # print(f'   batch item {i}',inputs_image_batch[ii].shape)  # (3,95,95)
                 pass
 
             # the yield
@@ -106,9 +106,8 @@ def train_data_generator(dataset_pairs):
             print('   generator:receive:', single_loss)
             #################
 
-
             # print statistics
-            #running_loss += single_loss
+            # running_loss += single_loss
             if i % 2000 == 1999:    # print every 2000 mini-batches
                 print(f'[{epoch + 1}, {i + 1:5d}] loss: {running_loss / 2000:.3f}')
                 running_loss = 0.0
@@ -118,6 +117,7 @@ def train_data_generator(dataset_pairs):
     print(':')
     print('Finished Training')
     # return('oh') don't return. It causes `StopIteration(value)` (if used by next())
+
 
 def mini_tain(dataset_pairs):
     # list of tuples (pairs), each is a bach and a label_batch
@@ -141,15 +141,14 @@ def mini_tain(dataset_pairs):
     for batch_index, inputs_image_batch, labels in genr:
     """
     try:
-        while(True):
+        while (True):
             batch_index, inputs_image_batch, labels = \
-              genr.send(send_object)
-              #next(genr)
-
+                genr.send(send_object)
+            # next(genr)
 
             #
             print('from generator:', batch_index)
-            #exit()
+            # exit()
             # zero the parameter gradients
             optimizer.zero_grad()
 
@@ -161,18 +160,17 @@ def mini_tain(dataset_pairs):
 
             send_object = loss.item()
 
-            #import random
-            #lss = random.randint(1,10)
+            # import random
+            # lss = random.randint(1,10)
             # print('sending', lss)
-            #genr.send(lss)
+            # genr.send(lss)
             # See [6]
 
             last_loss_to_send = lss
     except StopIteration as ss:
-      print('closingg', ss)
-      oo = genr.close()
-      print('oooo', oo)
-
+        print('closingg', ss)
+        oo = genr.close()
+        print('oooo', oo)
 
     # torch.save(net.state_dict(), SAVE_PATH)
     # print('Saved state')
