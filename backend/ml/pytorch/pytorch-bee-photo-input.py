@@ -397,23 +397,42 @@ def post_process(ptimg_a, labels_a, mult_factor):
             for j in numpy.random.permutation(m):
                 yield j, i  # j in range(m), i in range(n)
     # manual unit test
-    # for j,i in combinations(2, 3, 'SHUFFLE'):
-    #    print(j,i)
+
+    def manual_test():
+        for rep in range(3):
+            numpy.random.seed(2)
+            for j, i in combinations(2, 3, 'SHUFFLE'):
+                print(j, i)
+            print()
+    # manual_test()
     # exit()
 
+    Ns = len(t2_batch_a)
+    Ntr = mult_factor
     for t2_batch in t2_batch_a:
         assert t2_batch.shape[0] == 1
     # how to append multiple images in a batch pytorch
     # See [5]
+    numpy.random.seed(2)
     multiplied_batch = torch.stack(
-        [multi_transorm(t2_batch_a[j][0]) for j, i in combinations(len(t2_batch_a), mult_factor, 'SHUFFLE')])
+        [multi_transorm(t2_batch_a[j][0]) for j, i in combinations(Ns, Ntr, 'SHUFFLE')])
+
+    npa = numpy.array(
+        [labels_a[j] for j, i in combinations(Ns, mult_factor, 'SHUFFLE')],
+        dtype=int)
+    # not tested
+
+    labels_batch = torch.Tensor(npa).long()
+    assert len(labels_batch) == Ns * Ntr
 
     # todo: I need to do this twice, second time for labels
     #  solution 1: fix the random seed (from fetched one)
     #  solution 2: `yield from` (then, unzip?), (or multiply), (is it possible for two loops to use the same? yes: using a for loop)
     #   But will need to yeild out to two output channels
+    # For now, I sed the seed solution
 
-    print(multiplied_batch.shape)
+    assert multiplied_batch.shape[0] == Ns * Ntr
+
     return multiplied_batch
 
 
@@ -439,7 +458,9 @@ def process_files(image_file_list):
     if True:
         mult_factor_count = 100
 
-        pt_img_batch = post_process(pt_img_a, None, mult_factor_count)
+        # Nr labels
+        labels_a = [0, 1]
+        pt_img_batch = post_process(pt_img_a, labels_a, mult_factor_count)
         # print('shape', pt_img_batch.shape)  # torch.Size([100, 3, 32, 32])
         assert len(pt_img_batch.shape) == 4, f' ndim {len(pt_img_batch.shape)}'
 
@@ -468,6 +489,7 @@ def process_files(image_file_list):
 
         # stimuli, num_trials
 
+        # same as Nr
         Ns = len(pt_img_a)
         # Ntr = mult_factor_count
 
