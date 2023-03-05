@@ -269,7 +269,7 @@ def load_image_file(full_file_path):
     return img
 
 
-def post_process(ptimg_a, mult_factor):
+def post_process(ptimg_a, labels_a, mult_factor):
     """ Closely related to (fed by) load_image_file()
 
     # rename: post_process_and_multipy
@@ -408,6 +408,11 @@ def post_process(ptimg_a, mult_factor):
     multiplied_batch = torch.stack(
         [multi_transorm(t2_batch_a[j][0]) for j, i in combinations(len(t2_batch_a), mult_factor, 'SHUFFLE')])
 
+    # todo: I need to do this twice, second time for labels
+    #  solution 1: fix the random seed (from fetched one)
+    #  solution 2: `yield from` (then, unzip?), (or multiply), (is it possible for two loops to use the same? yes: using a for loop)
+    #   But will need to yeild out to two output channels
+
     print(multiplied_batch.shape)
     return multiplied_batch
 
@@ -434,7 +439,7 @@ def process_files(image_file_list):
     if True:
         mult_factor_count = 100
 
-        pt_img_batch = post_process(pt_img_a, mult_factor_count)
+        pt_img_batch = post_process(pt_img_a, None, mult_factor_count)
         # print('shape', pt_img_batch.shape)  # torch.Size([100, 3, 32, 32])
         assert len(pt_img_batch.shape) == 4, f' ndim {len(pt_img_batch.shape)}'
 
@@ -461,11 +466,16 @@ def process_files(image_file_list):
 
         # exit()
 
+        # stimuli, num_trials
+
+        Ns = len(pt_img_a)
+        # Ntr = mult_factor_count
+
         # todo: give `mini_train()` a generator, not array
         if train_mode:
             mini_train([
                 # pair 1
-                (pt_img_batch, label_batch(mult_factor_count, 1))
+                (pt_img_batch, label_batch(mult_factor_count * Ns, 1))
             ])
         else:
             load_and_classify(pt_img_batch)
