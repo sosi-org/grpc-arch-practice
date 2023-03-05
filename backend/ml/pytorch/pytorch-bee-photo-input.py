@@ -41,6 +41,7 @@ class Net(nn.Module):
         print('fwd2')
         x = self.pool(F.relu(self.conv2(x)))
         x = torch.flatten(x, 1)  # flatten all dimensions except batch
+        # mat1 and mat2 shapes cannot be multiplied (1x892672 and 400x120)
         x = F.relu(self.fc1(x))
         x = F.relu(self.fc2(x))
         x = self.fc3(x)
