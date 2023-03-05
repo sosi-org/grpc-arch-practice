@@ -37,7 +37,7 @@ def show_torch_imagebatch(images):
     print(f'Padding: {nrows} * {ncols} - {n} = {reminder}')
     assert reminder >= 0, 'negative padding?'
 
-    pad1 = images[0].unsqueeze(0) * 0.0 + 255
+    pad1 = images[0].unsqueeze(0) * 0.0 + 1
     # print(pad1.shape) # torch.Size([1, 3, 32, 32])
     images = torch.cat([images] + [pad1]*reminder, dim=0)
     img_rgb = torchvision.utils.make_grid(images, nrow=nrows)
@@ -267,6 +267,12 @@ def load_and_classify(images):
     print('Predicted: ', ' '.join(f'{classes[predicted[j]]:5s}'
           for j in range(num_images)))
 
+    for i in range(images.shape[0]):
+        if predicted[i] == 0:
+            # images[i] = images[i] / 2.0 + 0.5
+            images[i] = images[i] / 2.0 + 0.5
+            # images[i][1:3] = 0 # red
+            images[i][0] = 1.0  # red
     # In fact this is the input
     show_torch_imagebatch(images)
 
