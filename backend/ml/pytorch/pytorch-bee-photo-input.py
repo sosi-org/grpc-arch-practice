@@ -626,9 +626,10 @@ def demo_fixed_files():
         print(results)
 
         import json
-        with open('results.json', 'w', encoding='utf-8') as f:
+        result_filename = 'results.json'
+        with open(result_filename, 'w', encoding='utf-8') as f:
             json.dump(results, f, ensure_ascii=False, indent=4)
-        print('results json saved to file results.json')
+        print('results json saved to file: ' + result_filename)
 
     # for i in range(len(fn_list)):
     #    fn = fn_list[i]
