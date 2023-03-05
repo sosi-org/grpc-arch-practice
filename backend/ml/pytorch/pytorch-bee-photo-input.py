@@ -14,7 +14,11 @@ MODEL_PATH = './my-beecomb-model.pth'
 def imshow(img):
     import matplotlib.pyplot as plt
     import numpy as np
-    img = img / 2 + 0.5     # unnormalize
+    import matplotlib
+    import os
+    matplotlib.rcParams["savefig.directory"] = os.getcwd()
+
+    # img = img / 2 + 0.5     # unnormalize
     npimg = img.numpy()
     plt.imshow(np.transpose(npimg, (1, 2, 0)))
     plt.show()
@@ -500,6 +504,9 @@ def process_files(image_file_list, labels_a):
         Ns = len(pt_img_a)
         # Ntr = mult_factor_count
         labels_batch1 = label_batch(mult_factor_count * Ns, 1)
+
+    show_torch_image(pt_img_batch)
+    # todo: (maybe): send this out so that the next ones are done after this
 
     train_mode = True
 
