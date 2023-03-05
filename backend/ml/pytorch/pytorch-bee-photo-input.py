@@ -96,15 +96,15 @@ def train_data_generator(dataset_pairs):
             # data_pair is a list of [inputs_image_batch, labels]
             inputs_image_batch, labels = data_pair
 
-            print(type(inputs_image_batch))
-            print(type(labels))
+            # print(type(inputs_image_batch))
+            # print(type(labels))
             assert type(labels) == torch.Tensor, type(labels)
             assert type(inputs_image_batch) == torch.Tensor, type(
                 inputs_image_batch)
 
             print(len(inputs_image_batch))
             print(len(labels))
-            print((labels))
+            # print((labels))
             # assert len(inputs_image_batch) == len(labels), \
             #    'Number of labels should match number of images in a batch'
 
@@ -269,7 +269,7 @@ def load_image_file(full_file_path):
     return img
 
 
-def post_process(ptimg, mult_factor):
+def post_process(ptimg_a, mult_factor):
     """ Closely related to (fed by) load_image_file()
 
     # rename: post_process_and_multipy
@@ -342,13 +342,21 @@ def post_process(ptimg, mult_factor):
         # T.RandomResizedCrop( (32,32) ), # error:  (16x25 and 400x120)
         # T.RandomResizedCrop((95, 95)),
     ])
-    t2 = t(ptimg)
-    print("4", t2.shape)  # torch.Size([3, 719, 1280])
-    # return ptimg
 
-    # single, non batched up to here:
-    t2_batch = torch.unsqueeze(t2, 0)
-    # rename: single_image_batch
+    def pre_proc_each_image(ptimg):
+        t2 = t(ptimg)
+        # print("4", t2.shape)  # torch.Size([3, 719, 1280])
+        # return ptimg
+
+        # single, non batched up to here:
+        t2_batch1 = torch.unsqueeze(t2, 0)
+        # rename: single_image_batch
+
+        return t2_batch1
+
+    t2_batch_a = map(pre_proc_each_image, ptimg_a)
+    # load them all in advance
+    t2_batch_a = list(t2_batch_a)
 
     # to do: load multiple preloaded up to here (as a python list, not batch. or maybe batch is fine)
     # eithe rdraw randimly, or permutate (equal number: draw with substitution)
@@ -360,11 +368,45 @@ def post_process(ptimg, mult_factor):
     ])
 
     # modify below code if we want to multiply bigger batches (and shuffle them, or interlace them)
-    assert t2_batch.shape[0] == 1
+    def combinations(t2_batch_a_len, mult_count, method):
+        """
+        Generate n times indices of m images: n * m
+
+        @return (j, i) : in (image_id, trial)
+        @param `method`:
+            * np.random.permutation(m)
+            * np.random.permutation(m * n)  -- slightly faster because we can, also can cover more diverse sequences, inclusing repeats
+            * m * n times draw from n -- more diverse, may sample a non-equal number from differnt images
+            * Also two differnt orders of `for` are possible, but one is trivial
+
+        Example:
+        (2, 3, 'SHUFFLE'):
+            0 0
+            1 0
+            0 1
+            1 1
+            0 2
+            1 2
+        """
+        # only one methos is implemented
+        assert method == 'SHUFFLE'
+        # m = len(t2_batch_a)
+        m = t2_batch_a_len
+        n = mult_count
+        for i in range(n):
+            for j in numpy.random.permutation(m):
+                yield j, i  # j in range(m), i in range(n)
+    # manual unit test
+    # for j,i in combinations(2, 3, 'SHUFFLE'):
+    #    print(j,i)
+    # exit()
+
+    for t2_batch in t2_batch_a:
+        assert t2_batch.shape[0] == 1
     # how to append multiple images in a batch pytorch
     # See [5]
     multiplied_batch = torch.stack(
-        [multi_transorm(t2_batch[0]) for i in range(mult_factor)])
+        [multi_transorm(t2_batch_a[j][0]) for j, i in combinations(len(t2_batch_a), mult_factor, 'SHUFFLE')])
 
     print(multiplied_batch.shape)
     return multiplied_batch
@@ -381,16 +423,18 @@ def process_files(image_file_list):
     interesting: Can run run videos too: read_video()
     Also can write `write_png()`, good for highlighting.
     """
+    pt_img_a = []
     # todo: no, create a batch first, dont call for each input individually
     for full_filename in image_file_list:
         pt_img = load_image_file(full_filename)
         # todo: pre load all imates befor  this, and then retrain
 
         print('d1', pt_img.shape)
-
+        pt_img_a += [pt_img]
+    if True:
         mult_factor_count = 100
 
-        pt_img_batch = post_process(pt_img, mult_factor_count)
+        pt_img_batch = post_process(pt_img_a, mult_factor_count)
         # print('shape', pt_img_batch.shape)  # torch.Size([100, 3, 32, 32])
         assert len(pt_img_batch.shape) == 4, f' ndim {len(pt_img_batch.shape)}'
 
@@ -416,6 +460,8 @@ def process_files(image_file_list):
             return torch.Tensor(numpy.full((count,), value, dtype=int)).long()
 
         # exit()
+
+        # todo: give `mini_train()` a generator, not array
         if train_mode:
             mini_train([
                 # pair 1
