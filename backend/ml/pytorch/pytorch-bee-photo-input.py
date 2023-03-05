@@ -1,3 +1,5 @@
+import torch
+import torchvision
 
 # shortcuts:
 import torch.nn.functional as F
@@ -140,6 +142,10 @@ def load_image_file(full_file_path):
     # import torchvision
     from torchvision.io import read_image
     import torchvision.transforms as T
+    """
+    impl-docs:
+    read_image() -> output (Tensor[image_channels, image_height, image_width])
+    """
 
     img = read_image(full_file_path)
     img = T.ToPILImage()(img)
@@ -179,19 +185,39 @@ def process_files(image_file_list):
 
     The file_interface
     interface: one or a list of filenames
+
+
+    interesting: Can run run videos too: read_video()
+    Also can write `write_png()`, good for highlighting.
     """
     for full_filename in image_file_list:
         pt_img = load_image_file(full_filename)
 
         pt_img1 = post_process(pt_img)
 
+        """
+        `.unsqueeze(0)`:
+        GPT:
+        Note that we need to unsqueeze the image tensor along the first dimension (using image.unsqueeze(0)) in order to add an additional batch dimension to the tensor. This is because PyTorch's convolutional layers expect input tensors with four dimensions: a batch dimension (which specifies the number of input images in the batch), a channel dimension (which specifies the number of input channels), and two spatial dimensions (which specify the height and width of the input images). By unsqueezing the image tensor along the first dimension, we add a batch dimension with a size of 1, so that the input tensor has the required four dimensions.
+        """
         # train
-        mini_tain([[pt_img1, 1]])
+        # mini_tain([[pt_img1.unsqueeze(0), 1]])
 
         # #load_and_classify(pt_img1)
         # #load_and_classify(image_file_list)
         # test
-        # load_and_classify([pt_img1])
+
+        # import pdb;pdb.set_trace()
+
+        # print("1", pt_img1.shape)
+        ti = torchvision.transforms.ToTensor()(pt_img1)
+        #  argument 'input' (position 1) must be Tensor, not Image
+        # (C x H x W)
+        print("2", ti.shape)  # torch.Size([3, 719, 1280])
+        uns = torch.unsqueeze(ti, 0)
+        # (1, C x H x W)
+        print("3", uns.shape)  # torch.Size([1, 3, 719, 1280])
+        load_and_classify([uns])
 
 
 def demo_fixed_files():
@@ -229,4 +255,8 @@ if __name__ == '__main__':
 """
 References:
 [1] Wonderful tutorial: https://pytorch.org/tutorials/beginner/blitz/cifar10_tutorial.html
+
+[2] read_image() https://pytorch.org/vision/main/generated/torchvision.io.read_image.html#torchvision.io.read_image
+
+[3] Nice: torch.jit.script: https://pytorch.org/vision/main/auto_examples/plot_scripted_tensor_transforms.html#sphx-glr-auto-examples-plot-scripted-tensor-transforms-py
 """
