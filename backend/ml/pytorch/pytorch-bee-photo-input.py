@@ -77,6 +77,7 @@ class Net(nn.Module):
         # mat1 and mat2 shapes cannot be multiplied (1x892672 and 400x120)
         # 400x120 = mult(16 * 5 * 5, 120)
         x = F.relu(self.fc1(x))
+        print('fwd5', x.shape)  #
         x = F.relu(self.fc2(x))
         x = self.fc3(x)
         return x
@@ -340,7 +341,8 @@ def post_process(ptimg, mult_factor=10):
 
     #  a tranform that is repeated multipe times on a single-image batch of size (1, 3, w,h)
     multi_transorm = T.Compose([
-        T.RandomResizedCrop((95, 95)),
+        #         T.RandomResizedCrop((95, 95)),
+        T.RandomResizedCrop((32, 32)),
     ])
 
     # modify below code if we want to multiply bigger batches (and shuffle them, or interlace them)
