@@ -134,6 +134,7 @@ def mini_tain(dataset_pairs):
     # coroutine
     genr = train_data_generator(dataset_pairs)
     try:
+        # no "loss" before first instance of training
         # can't send non-None value to a just-started generator
         # last_loss, last_loss_to_send, send_object, _coroutine_send_object
         _coroutine_send_object = None
