@@ -422,6 +422,8 @@ def post_process(ptimg_a, labels_a, mult_factor):
         dtype=int)
     # not tested
 
+    # todo: contents not validated/confirmed
+
     labels_batch = torch.Tensor(npa).long()
     assert len(labels_batch) == Ns * Ntr
 
@@ -433,7 +435,7 @@ def post_process(ptimg_a, labels_a, mult_factor):
 
     assert multiplied_batch.shape[0] == Ns * Ntr
 
-    return multiplied_batch
+    return multiplied_batch, labels_batch
 
 
 def process_files(image_file_list):
@@ -460,7 +462,8 @@ def process_files(image_file_list):
 
         # Nr labels
         labels_a = [0, 1]
-        pt_img_batch = post_process(pt_img_a, labels_a, mult_factor_count)
+        pt_img_batch, labels_batch2 = post_process(
+            pt_img_a, labels_a, mult_factor_count)
         # print('shape', pt_img_batch.shape)  # torch.Size([100, 3, 32, 32])
         assert len(pt_img_batch.shape) == 4, f' ndim {len(pt_img_batch.shape)}'
 
@@ -492,12 +495,13 @@ def process_files(image_file_list):
         # same as Nr
         Ns = len(pt_img_a)
         # Ntr = mult_factor_count
+        labels_batch1 = label_batch(mult_factor_count * Ns, 1)
 
         # todo: give `mini_train()` a generator, not array
         if train_mode:
             mini_train([
                 # pair 1
-                (pt_img_batch, label_batch(mult_factor_count * Ns, 1))
+                (pt_img_batch, labels_batch2)
             ])
         else:
             load_and_classify(pt_img_batch)
