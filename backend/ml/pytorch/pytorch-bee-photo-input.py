@@ -24,8 +24,23 @@ def imshow(img):
     plt.show()
 
 
-def show_torch_image(images):
-    img_rgb = torchvision.utils.make_grid(images)
+def show_torch_imagebatch(images):
+
+    # pad to almost square
+    import math
+    n = len(images)
+    ϵ = 0.00000000001
+    nrows = math.ceil(math.sqrt(n) + ϵ)
+    ncols = math.ceil(float(n) / float(nrows) + ϵ)
+
+    reminder = nrows * ncols - n
+    print(f'Padding: {nrows} * {ncols} - {n} = {reminder}')
+    assert reminder >= 0, 'negative padding?'
+
+    pad1 = images[0].unsqueeze(0) * 0.0 + 255
+    # print(pad1.shape) # torch.Size([1, 3, 32, 32])
+    images = torch.cat([images] + [pad1]*reminder, dim=0)
+    img_rgb = torchvision.utils.make_grid(images, nrow=nrows)
     imshow(img_rgb)
 
 
@@ -219,8 +234,7 @@ def mini_train(dataset_pairs):
 
 
 def load_classes():
-    classes = ('plane', 'car', 'bird', 'cat',
-               'deer', 'dog', 'frog', 'horse', 'ship', 'truck')
+    classes = ('d1', 's2')
     # classes = load_dict(...)
     return classes
 
@@ -240,7 +254,8 @@ def load_and_classify(images):
     print(len(images))  # 3
     print(images.shape)  # ([3, 95, 95])
 
-    # num_images = len(images)  # note tested
+    num_images = len(images)
+    # 5000
     outputs = net(images)
 
     # ?
@@ -253,7 +268,7 @@ def load_and_classify(images):
           for j in range(num_images)))
 
     # In fact this is the input
-    show_torch_images(images)
+    show_torch_imagebatch(images)
 
 
 def process_loaded_images(image_list):
@@ -539,10 +554,10 @@ def process_files(image_file_list, labels_a):
 
     visualise = False
     if visualise:
-        show_torch_image(pt_img_batch)
+        show_torch_imagebatch(pt_img_batch)
     # todo: (maybe): send this out so that the next ones are done after this
 
-    train_mode = True
+    train_mode = False
 
     # todo: give `mini_train()` a generator, not array
     if train_mode:
@@ -609,5 +624,8 @@ References:
 [6] Coroutines https://book.pythontips.com/en/latest/coroutines.html
 
 [7] Useful: image.resize((imageSize, imageSize), Image.ANTIALIAS)
+
+[8] interesting:  torch.cat(matrices).cpu().detach().numpy() https://stackoverflow.com/questions/65940793/how-to-stack-matrices-with-different-size
+
 
 """
