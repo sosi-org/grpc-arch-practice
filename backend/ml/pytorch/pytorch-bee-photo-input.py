@@ -218,7 +218,7 @@ def process_files(image_file_list):
         uns = torch.unsqueeze(ti, 0)
         # (1, C x H x W)
         print("3", uns.shape)  # torch.Size([1, 3, 719, 1280])
-        #load_and_classify([uns])
+        # load_and_classify([uns])
         load_and_classify(uns)
         return
 
@@ -232,11 +232,11 @@ def process_files(image_file_list):
             T.ConvertImageDtype(torch.float),
             # T.RandomHorizontalFlip(0.5)
         ])
-        t2  =t (pt_img1)
+        t2 = t(pt_img1)
         print("4", t2.shape)  # torch.Size([3, 719, 1280])
 
-        #return t2
-        #load_and_classify(t2)
+        # return t2
+        # load_and_classify(t2)
 
 
 def demo_fixed_files():
