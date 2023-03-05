@@ -4,7 +4,8 @@ import torch
 import torchvision
 import torchvision.transforms as transforms
 
-MODEL_PATH = './my-beecomb-model.pth'
+# my-cifar_net.pth
+SAVE_PATH = './cfar-model.pth'
 
 
 def imshow(img):
@@ -82,7 +83,7 @@ def nn_exerpiment1(trainloader, testloader, classes):
     net = Net()
     try:
         net.load_state_dict(torch.load(SAVE_PATH))
-    except e:
+    except FileNotFoundError as e:
         print("loading saved state failed. Continuing without loading")
 
     import torch.optim as optim
@@ -97,6 +98,8 @@ def nn_exerpiment1(trainloader, testloader, classes):
         for i, data in enumerate(trainloader, 0):
             # get the inputs; data is a list of [inputs, labels]
             inputs, labels = data
+
+            print(inputs.shape) # torch.Size([4, 3, 32, 32])
 
             # zero the parameter gradients
             optimizer.zero_grad()
