@@ -59,9 +59,23 @@ def load_and_classify(images):
     # In fact this is the input
     show_torch_images(images)
 
+
+def process_loaded_images(image_list):
+  #todo: image_list is a list of loaded images in format of ...
+  pass
+
+#file_interface
+# interface: one or a list of filenames
+def process_files(image_file_list):
+  load_and_classify(image_file_list)
+
+
+def demo():
+  images = []
+  load_and_classify(images)
+
 if __name__ == '__main__':
-    images = []
-    load_and_classify(images)
+  demo()
 
 """
 References:
