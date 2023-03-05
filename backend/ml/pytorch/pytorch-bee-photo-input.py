@@ -71,27 +71,53 @@ class Net(nn.Module):
         self.fc2 = nn.Linear(120, 84)
         self.fc3 = nn.Linear(84, 10)
 
+        self.accum_count = 0
+
     def forward(self, x):
-        print('fwd1', x.shape)  # torch.Size([1, 3, 719, 1280])
+        print('fwd1', x.shape)  # ([1, 3, 719, 1280])    ([5000, 3, 32, 32])
         x = self.pool(F.relu(self.conv1(x)))
-        print('fwd2', x.shape)  # torch.Size([1, 6, 357, 638])
+        print('fwd2', x.shape)  # ([1, 6, 357, 638])     ([5000, 6, 14, 14])
         x = self.pool(F.relu(self.conv2(x)))
-        print('fwd3', x.shape)  # torch.Size([1, 16, 176, 317])
+        print('fwd3', x.shape)  # ([1, 16, 176, 317])    ([5000, 16, 5, 5])
         x = torch.flatten(x, 1)  # flatten all dimensions except batch
-        print('fwd4', x.shape)  # torch.Size([1, 892672])
+        print('fwd4', x.shape)  # ([1, 892672])          ([5000, 400])
         # mat1 and mat2 shapes cannot be multiplied (1x892672 and 400x120)
         # 400x120 = mult(16 * 5 * 5, 120)
         x = F.relu(self.fc1(x))
-        print('fwd5', x.shape)  #
+        print('fwd5', x.shape)  # ([5000, 120])
         x = F.relu(self.fc2(x))
         x = self.fc3(x)
+
+        self.accum_count += len(x)
         return x
+
+    def save(self, filename):
+        torch.save(self.state_dict(), filename)
+        print('Saved τ₁ state')
+        print('accum_count:', self.accum_count)
+        # 100'000
+
+    def load(self, filename):
+        self.load_state_dict(torch.load(filename))
+        print('Loaded τ₁ state')
+
+    def load_if_file_exists(self, filename):
+        """ or: load_if_exists() """
+        try:
+            self.load(filename)
+        except FileNotFoundError as e:
+            print("loading saved τ₁ state failed. "
+                  "Continuing without loading. Zero initiaisaitng τ₁=0")
 
 
 def train_data_generator(dataset_pairs):
 
     # train:
-    for epoch in range(2):  # loop over the dataset multiple times
+
+    repeats_same_batch_training_insisting = 2*10
+
+    # loop over the same batch multiple times
+    for epoch in range(repeats_same_batch_training_insisting):
         running_loss = 0.0
 
         # enumerate(values, start=1)
@@ -143,6 +169,10 @@ def mini_train(dataset_pairs):
     # rename: inputs_image_batch -> input_batch
 
     net = Net()
+
+    # load previous training: Accumulate learning across runs
+    net.load_if_file_exists(MODEL_PATH)
+
     import torch.optim as optim
 
     criterion = nn.CrossEntropyLoss()
@@ -179,8 +209,8 @@ def mini_train(dataset_pairs):
         oo = genr.close()
         print('oooo', oo)
 
-    # torch.save(net.state_dict(), SAVE_PATH)
-    # print('Saved state')
+    net.save(MODEL_PATH)
+
     print('bye')
 
     exit()
@@ -202,8 +232,8 @@ def load_and_classify(images):
     net = Net()
 
     # pre training: zill training:
-    if (False):
-        net.load_state_dict(torch.load(MODEL_PATH))
+    # if (False):
+    net.load(MODEL_PATH)
 
     classes = load_classes()
 
@@ -468,7 +498,9 @@ def process_files(image_file_list, labels_a):
         print('d1', pt_img.shape)
         pt_img_a += [pt_img]
 
-    mult_factor_count = 100
+    # todo: many more repeats, but not geenratng all at the same time in memory
+    # also, read them async/delayed/yielded/re-chunk (re-vectorise)
+    mult_factor_count = 50*50
 
     # Nr labels = len(labels_a)
     # labels_a = [0, 1]
@@ -505,7 +537,8 @@ def process_files(image_file_list, labels_a):
         # Ntr = mult_factor_count
         labels_batch1 = label_batch(mult_factor_count * Ns, 1)
 
-    if visualise = False:
+    visualise = False
+    if visualise:
         show_torch_image(pt_img_batch)
     # todo: (maybe): send this out so that the next ones are done after this
 
