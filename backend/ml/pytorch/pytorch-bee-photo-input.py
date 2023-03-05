@@ -66,14 +66,15 @@ def load_and_classify(images):
 
 
 def process_loaded_images(image_list):
-    # todo: image_list is a list of loaded images in format of ...
+    """ todo: image_list is a list of loaded images in format of ..."""
     pass
-
-# file_interface
-# interface: one or a list of filenames
 
 
 def process_files(image_file_list):
+    """
+    The file_interface
+    interface: one or a list of filenames
+    """
     load_and_classify(image_file_list)
 
 
