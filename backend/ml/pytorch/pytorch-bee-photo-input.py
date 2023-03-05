@@ -505,7 +505,8 @@ def process_files(image_file_list, labels_a):
         # Ntr = mult_factor_count
         labels_batch1 = label_batch(mult_factor_count * Ns, 1)
 
-    show_torch_image(pt_img_batch)
+    if visualise = False:
+        show_torch_image(pt_img_batch)
     # todo: (maybe): send this out so that the next ones are done after this
 
     train_mode = True
