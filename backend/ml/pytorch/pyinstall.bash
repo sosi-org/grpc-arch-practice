@@ -29,6 +29,8 @@ pip install matplotlib
 pip install torch
 pip install torchvision
 
+# dev-only:
+pip install autopep8
 
 python --version
 
