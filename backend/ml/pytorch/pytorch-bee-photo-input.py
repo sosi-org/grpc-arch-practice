@@ -407,6 +407,12 @@ def post_process(ptimg_a, labels_a, mult_factor):
     # manual_test()
     # exit()
 
+    # stimuli, num_trials: Ns, Ntr
+    #  Ns = same as Nr
+    # Ns = len(pt_img_a)
+    # Ntr = mult_factor_count
+    # Ntr * Ns
+
     Ns = len(t2_batch_a)
     Ntr = mult_factor
     for t2_batch in t2_batch_a:
@@ -418,7 +424,7 @@ def post_process(ptimg_a, labels_a, mult_factor):
         [multi_transorm(t2_batch_a[j][0]) for j, i in combinations(Ns, Ntr, 'SHUFFLE')])
 
     npa = numpy.array(
-        [labels_a[j] for j, i in combinations(Ns, mult_factor, 'SHUFFLE')],
+        [labels_a[j] for j, i in combinations(Ns, Ntr, 'SHUFFLE')],
         dtype=int)
     # not tested
 
@@ -467,35 +473,34 @@ def process_files(image_file_list):
         # print('shape', pt_img_batch.shape)  # torch.Size([100, 3, 32, 32])
         assert len(pt_img_batch.shape) == 4, f' ndim {len(pt_img_batch.shape)}'
 
-        # exit()
-
-        train_mode = True
-
         print(pt_img_batch.shape)  # torch.Size([3, 95, 95]) not a batch
         # exit()
 
-        def listint_to_tensor(list_of_int):
-            labels_np = numpy.array(list_of_int, dtype=int)
-            # labels = torch.stack([torch.Tensor(labels_np).int()]) # Expected input batch_size (10) to match target batch_size (1).
-            # labels = torch.stack([torch.Tensor(labels_np).int()]).T # 0D or 1D target tensor expected, multi-target not supported
-            # labels = torch.Tensor(labels_np).int() # Expectged Long
-            labels = torch.Tensor(labels_np).long()  # Expectged Long
-            return labels
-           # listint_to_tensor([1,2,3])
-           # input_tensor = torch.tensor([[1.0, 2.0, 3.0], [0.5, 2.5, 1.0], [0.8, 1.2, 3.0]])
-           # target_tensor = torch.tensor([2, 1, 0])
+        if False:  # decommissioning outdated labels logic
+            def listint_to_tensor(list_of_int):
+                labels_np = numpy.array(list_of_int, dtype=int)
+                # labels = torch.stack([torch.Tensor(labels_np).int()]) # Expected input batch_size (10) to match target batch_size (1).
+                # labels = torch.stack([torch.Tensor(labels_np).int()]).T # 0D or 1D target tensor expected, multi-target not supported
+                # labels = torch.Tensor(labels_np).int() # Expectged Long
+                labels = torch.Tensor(labels_np).long()  # Expectged Long
+                return labels
+            # listint_to_tensor([1,2,3])
+            # input_tensor = torch.tensor([[1.0, 2.0, 3.0], [0.5, 2.5, 1.0], [0.8, 1.2, 3.0]])
+            # target_tensor = torch.tensor([2, 1, 0])
 
-        def label_batch(count, value):
-            return torch.Tensor(numpy.full((count,), value, dtype=int)).long()
+            def label_batch(count, value):
+                return torch.Tensor(numpy.full((count,), value, dtype=int)).long()
 
-        # exit()
+            # exit()
 
-        # stimuli, num_trials
+            # stimuli, num_trials
 
-        # same as Nr
-        Ns = len(pt_img_a)
-        # Ntr = mult_factor_count
-        labels_batch1 = label_batch(mult_factor_count * Ns, 1)
+            # same as Nr
+            Ns = len(pt_img_a)
+            # Ntr = mult_factor_count
+            labels_batch1 = label_batch(mult_factor_count * Ns, 1)
+
+        train_mode = True
 
         # todo: give `mini_train()` a generator, not array
         if train_mode:
