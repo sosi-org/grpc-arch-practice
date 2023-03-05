@@ -9,8 +9,11 @@ import torch.nn as nn
 
 MODEL_PATH = './my-beecomb-model.pth'
 
+cli_mode = True
 
 # move near load_image_file()
+
+
 def imshow(img):
     import matplotlib.pyplot as plt
     import numpy as np
@@ -273,8 +276,11 @@ def load_and_classify(images):
             images[i] = images[i] / 2.0 + 0.5
             # images[i][1:3] = 0 # red
             images[i][0] = 1.0  # red
-    # In fact this is the input
-    show_torch_imagebatch(images)
+    if not cli_mode:
+        # In fact this is the input
+        show_torch_imagebatch(images)
+
+    return predicted
 
 
 def process_loaded_images(image_list):
@@ -528,7 +534,7 @@ def process_files(image_file_list, labels_a):
     if train_mode:
         mult_factor_count = 50*50
     else:
-        mult_factor_count = 40
+        mult_factor_count = 1  # 40
 
     # Nr labels = len(labels_a)
     # labels_a = [0, 1]
@@ -565,7 +571,7 @@ def process_files(image_file_list, labels_a):
         # Ntr = mult_factor_count
         labels_batch1 = label_batch(mult_factor_count * Ns, 1)
 
-    visualise = not (not train_mode)
+    visualise = not (not train_mode) and (not cli_mode)
     if visualise:
         show_torch_imagebatch(pt_img_batch)
     # todo: (maybe): send this out so that the next ones are done after this
@@ -576,8 +582,9 @@ def process_files(image_file_list, labels_a):
             # pair 1
             (pt_img_batch, labels_batch2)
         ])
+        return None
     else:
-        load_and_classify(pt_img_batch)
+        return load_and_classify(pt_img_batch)
 
 
 def demo_fixed_files():
@@ -600,7 +607,28 @@ def demo_fixed_files():
         lambda fn: images_path + '/' + fn,
         fn_list)
 
-    process_files(image_file_list, labels_a)
+    predicted = process_files(image_file_list, labels_a)
+
+    print('predicted', predicted)
+
+    if cli_mode:
+        results = []
+        for i in range(len(predicted)):
+            label = predicted[i].item()
+            filename = fn_list[i]
+            print(filename, ':', label)
+
+            jsonobj = {}
+            jsonobj['filename'] = filename
+            jsonobj['diagnosis'] = label
+
+            results.append(jsonobj)
+        print(results)
+
+        import json
+        with open('results.json', 'w', encoding='utf-8') as f:
+            json.dump(results, f, ensure_ascii=False, indent=4)
+        print('results json saved to file results.json')
 
     # for i in range(len(fn_list)):
     #    fn = fn_list[i]
