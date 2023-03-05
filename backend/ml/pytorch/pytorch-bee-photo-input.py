@@ -83,6 +83,7 @@ class Net(nn.Module):
 
 
 def mini_tain(dataset_imagearray):
+    # rename: dataset_imagearray --> image_batch? no. array of batches
     net = Net()
     import torch.optim as optim
 
@@ -98,6 +99,8 @@ def mini_tain(dataset_imagearray):
             print(i, 'data:', data)
             # get the inputs; data is a list of [inputs, labels]
             inputs, labels = data
+
+            # rename: inputs -> input_batch
 
             # zero the parameter gradients
             optimizer.zero_grad()
@@ -148,6 +151,9 @@ def load_and_classify(images):
 
     classes = load_classes()
 
+    print(len(images))  # 3
+    print(images.shape)  # ([3, 95, 95])
+
     # num_images = len(images)  # note tested
     outputs = net(images)
 
@@ -169,10 +175,22 @@ def process_loaded_images(image_list):
     pass
 
 
+def standard_loader():
+    # see https://stackoverflow.com/questions/58941007/how-do-i-load-multiple-grayscale-images-as-a-single-tensor-in-pytorch
+    ds = torchvision.datasets.ImageFolder(
+        r'C:\Users\dj\data\cifar10\test', transform=transforms.ToTensor())
+    dl = DataLoader(ds, batch_size=3)
+    print(len(dl))
+
+
 def load_image_file(full_file_path):
     """
     Low-level (doe snot post-process)
     See https://www.tutorialspoint.com/how-to-read-a-jpeg-or-png-image-in-pytorch
+
+
+    todo: much better:
+
     """
     # import torchvision
     from torchvision.io import read_image
@@ -180,25 +198,31 @@ def load_image_file(full_file_path):
     """
     impl-docs:
     read_image() -> output (Tensor[image_channels, image_height, image_width])
+
+    See img.convert('RGB') from https://stackoverflow.com/questions/58941007/how-do-i-load-multiple-grayscale-images-as-a-single-tensor-in-pytorch
     """
 
     img = read_image(full_file_path)
-    img = T.ToPILImage()(img)
-    # for manual verificaiton
-    # img.show()
+    if False:
+        img = T.ToPILImage()(img)
+        # for manual verificaiton
+        # img.show()
 
-    import torch
-    print(
-        f"Image of size {img.size}, type {type(img)}, is_tensor: { torch.is_tensor(img)} in path {full_file_path}")
-    # example output: (1280, 719)
+        import torch
+        print(
+            f"Image of size {img.size}, type {type(img)}, is_tensor: { torch.is_tensor(img)} in path {full_file_path}")
+        # example output: (1280, 719)
 
+    print("type", type(img))  # <class 'torch.Tensor'>
     return img
 
 
-def post_process(ptimg):
+def post_process(ptimg, mult_factor=10):
     """ Closely related to (fed by) load_image_file()
 
-    todo: make this return a transformation
+    # rename: post_process_and_multipy
+
+    todo: make this return a transformation (in fact two)
     i.e. make this a transformation
     (return Compose, or even the array)
 
@@ -217,6 +241,7 @@ def post_process(ptimg):
     # based on torch.nn.Conv2d .args: (in_channels, out_channels, kernel_size, stride=1)
 
     if False:
+        # img = ... T.ToPILImage()(img) ...
        # pt_img_batch = post_process(pt_img)
         """
         `.unsqueeze(0)`:
@@ -256,16 +281,40 @@ def post_process(ptimg):
     # See [4]
     # def get_transform(train):
     t = T.Compose([
+
+        T.ToPILImage(),  # from what? Shall we input this? no.
         T.PILToTensor(),
+
         T.ConvertImageDtype(torch.float),
         # T.RandomHorizontalFlip(0.5)
         # T.RandomResizedCrop( (32,32) ), # error:  (16x25 and 400x120)
-        T.RandomResizedCrop((95, 95)),  # error:  (16x25 and 400x120)
+        # T.RandomResizedCrop((95, 95)),
     ])
     t2 = t(ptimg)
     print("4", t2.shape)  # torch.Size([3, 719, 1280])
     # return ptimg
-    return t2
+
+    # single, non batched up to here:
+    t2_batch = torch.unsqueeze(t2, 0)
+    # rename: single_image_batch
+
+    # to do: load multiple preloaded up to here (as a python list, not batch. or maybe batch is fine)
+    # eithe rdraw randimly, or permutate (equal number: draw with substitution)
+
+    #  a tranform that is repeated multipe times on a single-image batch of size (1, 3, w,h)
+    multi_transorm = T.Compose([
+        T.RandomResizedCrop((95, 95)),
+    ])
+
+    # modify below code if we want to multiply bigger batches (and shuffle them, or interlace them)
+    assert t2_batch.shape[0] == 1
+    # how to append multiple images in a batch pytorch
+    # See [5]
+    multiplied_batch = torch.stack(
+        [multi_transorm(t2_batch[0]) for i in range(mult_factor)])
+
+    print(multiplied_batch.shape)
+    return multiplied_batch
 
 
 def process_files(image_file_list):
@@ -282,16 +331,37 @@ def process_files(image_file_list):
     # todo: no, create a batch first, dont call for each input individually
     for full_filename in image_file_list:
         pt_img = load_image_file(full_filename)
+        # todo: pre load all imates befor  this, and then retrain
+
+        print('d1', pt_img.shape)
 
         pt_img_batch = post_process(pt_img)
+        print('**d2', pt_img_batch.shape)
+        print('**d2l', len(pt_img_batch.shape))
+        assert len(pt_img_batch.shape) == 4
+        print('lennnnn', len(pt_img_batch.shape))
 
-        load_and_classify(pt_img_batch)
+        # exit()
+
+        train_mode = True
+
+        print(pt_img_batch.shape)  # torch.Size([3, 95, 95]) not a batch
+        # exit()
+        if train_mode:
+            mini_tain([pt_img_batch, 1])
+        else:
+            load_and_classify(pt_img_batch)
 
 
 def demo_fixed_files():
     apisave_base = '../../../../..'
     # todo: move sosi-practice-files to a test folder
     images_path = apisave_base + '/' + 'sosi-practice-files'
+
+    # todo: use standard_loader
+    # ibatch = standard_loader(images_path)
+    # process_files(image_file_list)
+
     fn_list = [
         'photo-sosi-2023-01-21-T-21-12-53.763.jpg',
         'photo-sosi-2023-01-21-T-21-41-05.593.jpg',
@@ -310,7 +380,7 @@ def demo_fixed_files():
 
 
 def demo():
-    images = []
+    images = []  # wrong: not an array, it should be a batch
     load_and_classify(images)
 
 
@@ -329,5 +399,7 @@ References:
 [3] Nice: torch.jit.script: https://pytorch.org/vision/main/auto_examples/plot_scripted_tensor_transforms.html#sphx-glr-auto-examples-plot-scripted-tensor-transforms-py
 
 [4] https://pytorch.org/tutorials/intermediate/torchvision_tutorial.html
+
+[5] how to append multiple images in a batch pytorch    https://stackoverflow.com/a/68102266/4374258
 
 """
