@@ -391,10 +391,8 @@ def process_files(image_file_list):
         mult_factor_count = 100
 
         pt_img_batch = post_process(pt_img, mult_factor_count)
-        print('**d2', pt_img_batch.shape)
-        print('**d2l', len(pt_img_batch.shape))
-        assert len(pt_img_batch.shape) == 4
-        print('lennnnn', len(pt_img_batch.shape))
+        # print('shape', pt_img_batch.shape)  # torch.Size([100, 3, 32, 32])
+        assert len(pt_img_batch.shape) == 4, f' ndim {len(pt_img_batch.shape)}'
 
         # exit()
 
