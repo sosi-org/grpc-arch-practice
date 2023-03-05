@@ -81,7 +81,15 @@ def load_file(full_file_path):
 
     img = read_image(full_file_path)
     img = T.ToPILImage()(img)
-    img.show()
+    # for manual verificaiton
+    # img.show()
+
+    import torch
+    print(
+        f"Image of size {img.size}, type {type(img)}, is_tensor: { torch.is_tensor(img)} in path {full_file_path}")
+    exit()
+
+    return img
 
 
 def process_files(image_file_list):
