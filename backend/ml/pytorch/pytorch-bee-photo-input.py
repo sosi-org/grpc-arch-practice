@@ -7,6 +7,7 @@ import torch.nn as nn
 MODEL_PATH = './my-cifar_net.pth'
 
 
+# move near load_image_file()
 def imshow(img):
     import matplotlib.pyplot as plt
     import numpy as np
@@ -81,7 +82,7 @@ def process_loaded_images(image_list):
     pass
 
 
-def load_file(full_file_path):
+def load_image_file(full_file_path):
     """
     Low-level (doe snot post-process)
     See https://www.tutorialspoint.com/how-to-read-a-jpeg-or-png-image-in-pytorch
@@ -104,6 +105,7 @@ def load_file(full_file_path):
 
 
 def post_process(ptimg):
+    """ Closely related to (fed by) load_image_file() """
     import pdb
     pdb.set_trace()
 
@@ -119,7 +121,7 @@ def process_files(image_file_list):
     interface: one or a list of filenames
     """
     for full_filename in image_file_list:
-        pt_img = load_file(full_filename)
+        pt_img = load_image_file(full_filename)
 
         pt_img1 = post_process(pt_img)
         # load_and_classify(image_file_list)
@@ -144,7 +146,7 @@ def demo_fixed_files():
     #    fn = fn_list[i]
     #    filename = images_path + '/' + fn
     #
-    #    load_file(filename)
+    #    load_image_file(filename)
 
 
 def demo():
