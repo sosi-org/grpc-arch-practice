@@ -9,6 +9,8 @@ import torch.nn as nn
 
 MODEL_PATH = './my-beecomb-model.pth'
 
+# todo: remove global variable
+# global cli_mode
 cli_mode = True
 
 # move near load_image_file()
@@ -276,6 +278,7 @@ def load_and_classify(images):
             images[i] = images[i] / 2.0 + 0.5
             # images[i][1:3] = 0 # red
             images[i][0] = 1.0  # red
+    # global cli_mode
     if not cli_mode:
         # In fact this is the input
         show_torch_imagebatch(images)
@@ -481,6 +484,7 @@ def post_process(ptimg_a, labels_a, mult_factor):
     # how to append multiple images in a batch pytorch
     # See [5]
     numpy.random.seed(2)
+    # todo: only if training_mode
     multiplied_batch = torch.stack(
         [multi_transorm(t2_batch_a[j][0]) for j, i in combinations(Ns, Ntr, 'SHUFFLE')])
 
@@ -533,8 +537,10 @@ def process_files(image_file_list, labels_a):
 
     if train_mode:
         mult_factor_count = 50*50
+        assert not labels_a == None
     else:
         mult_factor_count = 1  # 40
+        # assert labels_a == None
 
     # Nr labels = len(labels_a)
     # labels_a = [0, 1]
@@ -571,6 +577,7 @@ def process_files(image_file_list, labels_a):
         # Ntr = mult_factor_count
         labels_batch1 = label_batch(mult_factor_count * Ns, 1)
 
+    # global cli_mode
     visualise = not (not train_mode) and (not cli_mode)
     if visualise:
         show_torch_imagebatch(pt_img_batch)
@@ -587,30 +594,49 @@ def process_files(image_file_list, labels_a):
         return load_and_classify(pt_img_batch)
 
 
-def demo_fixed_files():
-    apisave_base = '../../../../..'
-    # todo: move sosi-practice-files to a test folder
-    images_path = apisave_base + '/' + 'sosi-practice-files'
+def demo_fixed_files(file_list=None):
+    if file_list == None:
+        print('demo mode')
+        # global cli_mode
+        # no, dont set it to False here
+        # cli_mode = False
+        #assert cli_mode == False
 
-    # todo: use standard_loader
-    # ibatch = standard_loader(images_path)
-    # process_files(image_file_list)
+        apisave_base = '../../../../..'
+        # todo: move sosi-practice-files to a test folder
+        images_path = apisave_base + '/' + 'sosi-practice-files'
 
-    fn_list = [
-        'photo-sosi-2023-01-21-T-21-12-53.763.jpg',
-        'photo-sosi-2023-01-21-T-21-41-05.593.jpg',
-    ]
-    labels_a = [0, 1]
+        # todo: use standard_loader
+        # ibatch = standard_loader(images_path)
+        # process_files(image_file_list)
 
-    #
-    image_file_list = map(
-        lambda fn: images_path + '/' + fn,
-        fn_list)
+        fn_list = [
+            'photo-sosi-2023-01-21-T-21-12-53.763.jpg',
+            'photo-sosi-2023-01-21-T-21-41-05.593.jpg',
+        ]
+        # tarining only
+        labels_a = [0, 1]
+
+        #
+        image_file_list = map(
+            lambda fn: images_path + '/' + fn,
+            fn_list)
+    else:
+        print('CLI mode: with specified files:', repr(file_list))
+        #global cli_mode
+        assert cli_mode == True
+        image_file_list = file_list
+        labels_a = list(map(lambda x: 0, file_list))
+        # todo:
+        # labels_a = None
+
+    pass
 
     predicted = process_files(image_file_list, labels_a)
 
     print('predicted', predicted)
 
+    # global cli_mode
     if cli_mode:
         results = []
         for i in range(len(predicted)):
@@ -645,8 +671,12 @@ def demo():
 
 if __name__ == '__main__':
     # demo()
-
-    demo_fixed_files()
+    import sys
+    if len(sys.argv) == 1:
+        demo_fixed_files()
+    elif len(sys.argv) > 1:
+        # files specified
+        demo_fixed_files(sys.argv[1:])
 
 
 """
