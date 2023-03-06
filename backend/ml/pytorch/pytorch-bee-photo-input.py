@@ -600,7 +600,7 @@ def demo_fixed_files(file_list=None):
         # global cli_mode
         # no, dont set it to False here
         # cli_mode = False
-        #assert cli_mode == False
+        # assert cli_mode == False
 
         apisave_base = '../../../../..'
         # todo: move sosi-practice-files to a test folder
@@ -623,7 +623,7 @@ def demo_fixed_files(file_list=None):
             fn_list)
     else:
         print('CLI mode: with specified files:', repr(file_list))
-        #global cli_mode
+        # global cli_mode
         assert cli_mode == True
         image_file_list = file_list
         labels_a = list(map(lambda x: 0, file_list))
