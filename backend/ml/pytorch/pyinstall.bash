@@ -20,8 +20,8 @@ set -exu
 
 #apt install python3.
 # python3.8           python3.8-dev       python3.8-examples  python3.8-minimal   python3.9           python3.9-dev       python3.9-examples  python3.9-minimal python3.8-dbg       python3.8-doc       python3.8-full      python3.8-venv      python3.9-dbg       python3.9-doc       python3.9-full      python3.9-venv
-# chosen:
-#   sudo apt install python3.9-venv
+# Only 3.8 works:
+#   sudo apt install python3.8-venv
 # needs sudo
 
 # It is a path, not a name. again and again in bash.
@@ -43,6 +43,9 @@ pip install matplotlib
 #pip install sympy
 pip install torch
 pip install torchvision
+
+# Why does it get torch each time?
+# todo upgeade that python
 
 # dev-only:
 pip install autopep8
