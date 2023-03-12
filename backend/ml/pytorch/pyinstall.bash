@@ -33,9 +33,11 @@ echo "The venv is at: $VNAME/bin/activate"
 # rm -rf "$VNAME"
 
 ls "$VNAME" || \
-    python3 -m venv --upgrade --upgrade-deps --copies "$VNAME"
+    python3 -m venv --upgrade --copies "$VNAME"
 # https://docs.python.org/3/library/venv.html#creating-virtual-environments
 # --system-site-packages
+# cannot work:
+# --upgrade-deps
 
 #--python=python3.5
 
