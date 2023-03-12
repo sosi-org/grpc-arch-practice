@@ -32,12 +32,14 @@ echo "The venv is at: $VNAME/bin/activate"
 
 # rm -rf "$VNAME"
 
+# python3 -m venv --upgrade --copies "$VNAME" || :
 ls "$VNAME" || \
-    python3 -m venv --upgrade --copies "$VNAME"
+    python3 -m venv --copies "$VNAME"
 # https://docs.python.org/3/library/venv.html#creating-virtual-environments
 # --system-site-packages
 # cannot work:
 # --upgrade-deps
+# --upgrade ==> no 'activate' is created
 
 #--python=python3.5
 
