@@ -7,6 +7,7 @@ import torch.nn.functional as F
 import torch.nn as nn
 #
 
+# todo: not use current directory
 MODEL_PATH = './my-beecomb-model.pth'
 
 # todo: remove global variable

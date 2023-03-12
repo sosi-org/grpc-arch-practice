@@ -28,13 +28,22 @@ set -exu
 VNAME_DEFAULT="./p3-for-me"
 export VNAME=${1:-$VNAME_DEFAULT}
 
+echo "The venv is at: $VNAME/bin/activate"
+
 # rm -rf "$VNAME"
 
 ls "$VNAME" || \
-    python3 -m venv "$VNAME"
+    python3 -m venv --upgrade --upgrade-deps --copies "$VNAME"
+# https://docs.python.org/3/library/venv.html#creating-virtual-environments
+# --system-site-packages
+
 #--python=python3.5
 
+echo "use: ----> source $VNAME/bin/activate"
+echo
+echo
 source "$VNAME/bin/activate"
+echo
 
 pip install numpy
 pip install matplotlib
