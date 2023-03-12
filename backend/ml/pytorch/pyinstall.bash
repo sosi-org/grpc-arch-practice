@@ -11,6 +11,19 @@ set -exu
 
 # apt install python3.10-venv
 
+
+#The virtual environment was not created successfully because ensurepip is not available.  On Debian/Ubuntu systems, you need to install the python3-venv package using the following command.
+#
+#    apt install python3.8-venv
+
+
+
+#apt install python3.
+# python3.8           python3.8-dev       python3.8-examples  python3.8-minimal   python3.9           python3.9-dev       python3.9-examples  python3.9-minimal python3.8-dbg       python3.8-doc       python3.8-full      python3.8-venv      python3.9-dbg       python3.9-doc       python3.9-full      python3.9-venv
+# chosen:
+#   sudo apt install python3.9-venv
+# needs sudo
+
 # It is a path, not a name. again and again in bash.
 VNAME_DEFAULT="./p3-for-me"
 export VNAME=${1:-$VNAME_DEFAULT}
