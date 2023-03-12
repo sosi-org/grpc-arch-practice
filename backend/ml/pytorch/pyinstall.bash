@@ -44,7 +44,11 @@ ls "$VNAME" || \
 echo "use: ----> source $VNAME/bin/activate"
 echo
 echo
-source "$VNAME/bin/activate"
+
+# todo: not sure why it does not have an `activate``
+
+source "$VNAME/bin/activate" || :
+
 echo
 
 pip install numpy
