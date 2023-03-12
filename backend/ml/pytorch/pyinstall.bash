@@ -58,8 +58,11 @@ pip install matplotlib
 # pip install cppyy
 #pip install pygame
 #pip install sympy
-pip install torch
-pip install torchvision
+# pip install torch
+# pip install torchvision
+# to consume less memory, and hence, avoid "Killed"
+pip install torch --no-cache-dir
+pip install torchvision  --no-cache-dir
 
 # Why does it get torch each time?
 # todo upgeade that python
