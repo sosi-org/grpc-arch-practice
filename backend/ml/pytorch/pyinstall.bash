@@ -11,7 +11,9 @@ set -exu
 
 # apt install python3.10-venv
 
-VNAME="p3-for-me"
+# It is a path, not a name. again and again in bash.
+VNAME_DEFAULT="./p3-for-me"
+export VNAME=${1:-$VNAME_DEFAULT}
 
 # rm -rf "$VNAME"
 
@@ -19,7 +21,7 @@ ls "$VNAME" || \
     python3 -m venv "$VNAME"
 #--python=python3.5
 
-source "./$VNAME/bin/activate"
+source "$VNAME/bin/activate"
 
 pip install numpy
 pip install matplotlib
